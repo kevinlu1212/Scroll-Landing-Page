@@ -348,15 +348,14 @@ body.is-transitioning .transition-curtain { opacity: 1; }
 
 .about-lanyard {
   position: absolute;
-  z-index: 3;
-  top: 6vh;
-  right: 1.5%;
-  width: min(58vw, 820px);
-  height: 90vh;
+  z-index: 6;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
   opacity: 0;
   visibility: hidden;
-  transform: translate3d(14vw, 3vh, 0) rotate(3deg) scale(.72);
-  transform-origin: 64% 8%;
+  transform: translate3d(10vw, 1vh, 0) rotate(1deg) scale(.98);
+  transform-origin: 72% 8%;
   transition:
     opacity .55s ease,
     visibility .55s,
@@ -375,7 +374,8 @@ body.is-transitioning .transition-curtain { opacity: 1; }
 
 #lanyard-root,
 .lanyard-wrapper {
-  position: relative;
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   min-height: 0;
@@ -386,7 +386,7 @@ body.is-transitioning .transition-curtain { opacity: 1; }
   display: flex;
   align-items: center;
   justify-content: center;
-  transform: scale(.94);
+  transform: none;
   transform-origin: center;
 }
 
@@ -451,11 +451,10 @@ body.is-transitioning .transition-curtain { opacity: 1; }
   }
 
   .about-lanyard {
-    top: 5vh;
-    right: -18vw;
-    width: 110vw;
-    height: 70vh;
-    transform: translate3d(28vw, -2vh, 0) rotate(5deg) scale(.7);
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    transform: translate3d(16vw, -1vh, 0) rotate(2deg) scale(.98);
   }
 
   .about-panel.is-active .about-lanyard {
@@ -463,12 +462,12 @@ body.is-transitioning .transition-curtain { opacity: 1; }
   }
 
   .lanyard-wrapper {
-    transform: scale(.82);
+    transform: none;
   }
 
   .lanyard-interaction-hint {
-    right: 23vw;
-    bottom: 5vh;
+    right: 4vw;
+    bottom: 31vh;
   }
 }
 
@@ -478,19 +477,18 @@ body.is-transitioning .transition-curtain { opacity: 1; }
   }
 
   .about-lanyard {
-    top: 2vh;
-    right: -32vw;
-    width: 138vw;
-    height: 68vh;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
   }
 
   .lanyard-wrapper {
-    transform: scale(.74);
+    transform: none;
   }
 
   .lanyard-interaction-hint {
-    right: 34vw;
-    bottom: 1.5vh;
+    right: 4vw;
+    bottom: 31vh;
   }
 
   .lanyard-interaction-hint span:last-child,

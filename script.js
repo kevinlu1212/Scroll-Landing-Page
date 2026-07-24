@@ -52,7 +52,6 @@
   let wheelTotal = 0;
   let wheelTimer = 0;
   let touchStartY = 0;
-  let touchStartedOnLanyard = false;
   let lanyardPulseTimer = 0;
 
   const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
@@ -276,13 +275,9 @@
   window.addEventListener('resize', positionHotspots);
   window.addEventListener('touchstart', (event) => {
     touchStartY = event.changedTouches[0].clientY;
-    touchStartedOnLanyard = Boolean(event.target.closest?.('#lanyard-root'));
   }, { passive: true });
   window.addEventListener('touchend', (event) => {
-    if (touchStartedOnLanyard) {
-      touchStartedOnLanyard = false;
-      return;
-    }
+    if (window.__lanyardDragActive || performance.now() < (window.__lanyardDragGuardUntil || 0)) return;
     if (transitionLocked || body.classList.contains('detail-open')) return;
     const distance = touchStartY - event.changedTouches[0].clientY;
     if (Math.abs(distance) > 48) setStage(currentStage + (distance > 0 ? 1 : -1));
