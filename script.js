@@ -1,117 +1,285 @@
 (() => {
   const body = document.body;
-  const video = document.querySelector('#scroll-video');
-  const header = document.querySelector('.site-header');
-  const footer = document.querySelector('.site-footer');
-  const progressBar = document.querySelector('.scroll-progress span');
-  const revealHeading = document.querySelector('.scroll-reveal');
-  const menuToggle = document.querySelector('.menu-toggle');
-  const mobileMenu = document.querySelector('.mobile-menu');
+  const video = document.querySelector('#gallery-video');
+  const panels = [...document.querySelectorAll('.stage-panel')];
+  const navLinks = [...document.querySelectorAll('[data-stage-link]')];
+  const hotspots = [...document.querySelectorAll('.hotspot')];
+  const currentStageLabel = document.querySelector('.current-stage');
+  const stageProgress = document.querySelector('.stage-indicator div i');
+  const detailView = document.querySelector('.detail-view');
+  const detailTitle = document.querySelector('.detail-title');
+  const categoryList = document.querySelector('.category-list');
+  const categoryButtons = [...document.querySelectorAll('[data-category]')];
+  const categoryNumber = document.querySelector('.category-number');
+  const categoryHeading = document.querySelector('.category-detail h2');
+  const categoryDescription = document.querySelector('.category-description');
+  const categoryTags = document.querySelector('.category-tags');
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  const clamp = (value, min = 0, max = 1) => Math.min(Math.max(value, min), max);
-  const words = revealHeading.dataset.revealText.trim().split(/\s+/);
-
-  revealHeading.innerHTML = words
-    .map((word) => `<span class="word">${word}</span>`)
-    .join(' ');
-
-  const wordElements = [...revealHeading.querySelectorAll('.word')];
-  let videoReady = false;
-  let frameRequested = false;
-
-  const finishLoading = () => {
-    body.classList.remove('is-loading');
-  };
-
-  const markVideoReady = () => {
-    if (videoReady) return;
-    videoReady = true;
-    if (video.duration && Number.isFinite(video.duration)) {
-      video.currentTime = Math.min(0.01, video.duration);
+  const stageTimes = [1, 2, 4];
+  const stageHashes = ['home', 'about', 'works'];
+  const categories = {
+    toy: {
+      number: '01 / ART TOY',
+      title: '潮玩',
+      description: '从角色性格、轮廓比例到材质触感，构建兼具叙事性与收藏体验的立体形象。',
+      tags: ['CHARACTER', 'MATERIAL', 'COLLECTIBLE']
+    },
+    culture: {
+      number: '02 / CULTURAL CREATIVE',
+      title: '文创',
+      description: '将文化线索转化为当代视觉语言，通过图形、物件与包装形成可以被日常使用的叙事载体。',
+      tags: ['GRAPHIC', 'STORY', 'IDENTITY']
+    },
+    sculpture: {
+      number: '03 / SCULPTURE',
+      title: '雕塑',
+      description: '研究形体、材料与光线的关系，让静态体量在不同观看角度中呈现持续变化的空间表情。',
+      tags: ['FORM', 'STONE', 'LIGHT']
+    },
+    scene: {
+      number: '04 / SCENE DESIGN',
+      title: '场景设计',
+      description: '以光线、材质和观看动线组织空间，让作品与观者之间产生连续、沉浸的叙事关系。',
+      tags: ['ATMOSPHERE', 'MATERIAL', 'EXPERIENCE']
     }
-    window.setTimeout(finishLoading, 250);
-    requestTick();
   };
 
-  video.addEventListener('loadedmetadata', markVideoReady, { once: true });
-  video.addEventListener('canplay', markVideoReady, { once: true });
-  video.addEventListener('error', finishLoading, { once: true });
-  window.setTimeout(finishLoading, 4000);
+  let currentStage = 0;
+  let transitionLocked = true;
+  let booted = false;
+  let animationFrame = 0;
+  let wheelTotal = 0;
+  let wheelTimer = 0;
+  let touchStartY = 0;
 
-  const updateRevealText = () => {
-    if (reduceMotion) return;
-    const rect = revealHeading.getBoundingClientRect();
-    const travel = window.innerHeight + rect.height * 0.55;
-    const sectionProgress = clamp((window.innerHeight * 0.9 - rect.top) / travel);
-    const spread = 0.22;
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+  const easeInOut = (value) => value < 0.5 ? 4 * value * value * value : 1 - Math.pow(-2 * value + 2, 3) / 2;
 
-    wordElements.forEach((word, index) => {
-      const start = (index / Math.max(wordElements.length - 1, 1)) * (1 - spread);
-      const localProgress = clamp((sectionProgress - start) / spread);
-      word.style.setProperty('--word-opacity', String(0.1 + localProgress * 0.9));
-      word.style.setProperty('--word-blur', `${(1 - localProgress) * 5}px`);
-      word.style.setProperty('--word-y', `${(1 - localProgress) * 18}px`);
-      word.style.setProperty('--word-rotate', `${(1 - localProgress) * 12}deg`);
+  const finishAt = (target, callback) => {
+    cancelAnimationFrame(animationFrame);
+    video.pause();
+    try { video.currentTime = target; } catch (error) { /* metadata fallback */ }
+    callback?.();
+  };
+
+  const seekTo = (target, callback) => {
+    const safeTarget = clamp(target, 0, Math.max(0, (video.duration || 4.18) - 0.03));
+    const startTime = video.currentTime || 0;
+    const distance = safeTarget - startTime;
+
+    if (Math.abs(distance) < 0.035 || reduceMotion) {
+      finishAt(safeTarget, callback);
+      return;
+    }
+
+    cancelAnimationFrame(animationFrame);
+    video.pause();
+    const duration = clamp(Math.abs(distance) * 520, 620, 1250);
+    const startedAt = performance.now();
+
+    const update = (now) => {
+      const progress = clamp((now - startedAt) / duration, 0, 1);
+      const value = startTime + distance * easeInOut(progress);
+      if (!video.seeking || progress === 1) video.currentTime = value;
+      if (progress < 1) animationFrame = requestAnimationFrame(update);
+      else finishAt(safeTarget, callback);
+    };
+
+    animationFrame = requestAnimationFrame(update);
+  };
+
+  const playForwardTo = (target, callback) => {
+    const safeTarget = clamp(target, 0, Math.max(0, (video.duration || 4.18) - 0.03));
+    if (video.currentTime >= safeTarget - 0.035) {
+      seekTo(safeTarget, callback);
+      return;
+    }
+
+    cancelAnimationFrame(animationFrame);
+    video.playbackRate = 1;
+    const monitor = () => {
+      if (video.currentTime >= safeTarget - 0.018 || video.ended) finishAt(safeTarget, callback);
+      else animationFrame = requestAnimationFrame(monitor);
+    };
+
+    video.play().then(() => {
+      animationFrame = requestAnimationFrame(monitor);
+    }).catch(() => seekTo(safeTarget, callback));
+  };
+
+  const moveVideoTo = (target, callback) => {
+    if (target > video.currentTime + 0.035) playForwardTo(target, callback);
+    else seekTo(target, callback);
+  };
+
+  const updateStageInterface = (index) => {
+    body.dataset.stage = String(index);
+    panels.forEach((panel, panelIndex) => {
+      const active = panelIndex === index;
+      panel.classList.toggle('is-active', active);
+      panel.setAttribute('aria-hidden', String(!active));
+    });
+    document.querySelectorAll('.nav-link').forEach((link) => {
+      link.classList.toggle('is-active', Number(link.dataset.stageLink) === index);
+    });
+    currentStageLabel.textContent = String(index + 1).padStart(2, '0');
+    stageProgress.style.transform = `scaleY(${(index + 1) / stageTimes.length})`;
+    positionHotspots();
+  };
+
+  const setStage = (index, options = {}) => {
+    const targetStage = clamp(index, 0, stageTimes.length - 1);
+    if (!booted || (transitionLocked && !options.force)) return;
+
+    if (body.classList.contains('detail-open')) closeDetail();
+    if (targetStage === currentStage && !options.force) return;
+
+    transitionLocked = true;
+    body.classList.add('is-transitioning');
+    panels.forEach((panel) => panel.classList.remove('is-active'));
+    currentStage = targetStage;
+    history.replaceState(null, '', `#${stageHashes[targetStage]}`);
+
+    moveVideoTo(stageTimes[targetStage], () => {
+      updateStageInterface(targetStage);
+      window.setTimeout(() => {
+        body.classList.remove('is-transitioning');
+        transitionLocked = false;
+        options.onComplete?.();
+      }, 260);
     });
   };
 
-  const updateVideo = () => {
-    if (!videoReady || !video.duration || video.seeking || reduceMotion) return;
-    const footerTop = footer.offsetTop;
-    const stopScroll = Math.max(1, footerTop - window.innerHeight * 0.2);
-    const scrollProgress = clamp(window.scrollY / stopScroll);
-    const targetTime = scrollProgress * Math.max(0, video.duration - 0.08);
-
-    if (Math.abs(video.currentTime - targetTime) > 0.035) {
-      video.currentTime = targetTime;
-    }
+  const setCategoryExpanded = (expanded) => {
+    detailTitle.setAttribute('aria-expanded', String(expanded));
+    categoryList.setAttribute('aria-hidden', String(!expanded));
+    categoryList.classList.toggle('is-expanded', expanded);
   };
 
-  const updateInterface = () => {
-    const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-    const progress = clamp(window.scrollY / maxScroll);
-    progressBar.style.transform = `scaleY(${progress})`;
-
-    const headerProgress = clamp((window.scrollY - 500) / 300);
-    header.style.transform = `translate3d(0, ${headerProgress * -150}px, 0)`;
-
-    updateRevealText();
-    updateVideo();
-    frameRequested = false;
+  const selectCategory = (key) => {
+    const category = categories[key] || categories.scene;
+    categoryButtons.forEach((button) => button.classList.toggle('is-active', button.dataset.category === key));
+    categoryNumber.textContent = category.number;
+    categoryHeading.textContent = category.title;
+    categoryDescription.textContent = category.description;
+    categoryTags.innerHTML = category.tags.map((tag) => `<span>${tag}</span>`).join('');
+    history.replaceState(null, '', `#works/${key}`);
   };
 
-  function requestTick() {
-    if (frameRequested) return;
-    frameRequested = true;
-    window.requestAnimationFrame(updateInterface);
+  const openDetail = (key = 'scene', expand = false) => {
+    video.pause();
+    video.currentTime = Math.min(4, Math.max(0, video.duration - 0.03));
+    selectCategory(key);
+    setCategoryExpanded(expand);
+    body.classList.add('detail-open');
+    detailView.setAttribute('aria-hidden', 'false');
+  };
+
+  function closeDetail() {
+    body.classList.remove('detail-open');
+    detailView.setAttribute('aria-hidden', 'true');
+    history.replaceState(null, '', '#works');
   }
 
-  const revealObserver = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('is-visible');
-        revealObserver.unobserve(entry.target);
-      }
+  function positionHotspots() {
+    if (!video.videoWidth || !video.videoHeight) return;
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const scale = Math.max(viewportWidth / video.videoWidth, viewportHeight / video.videoHeight);
+    const renderedWidth = video.videoWidth * scale;
+    const renderedHeight = video.videoHeight * scale;
+    const objectPosition = getComputedStyle(video).objectPosition.split(' ');
+    const positionX = parseFloat(objectPosition[0]) / 100 || 0.5;
+    const positionY = parseFloat(objectPosition[1] || '50%') / 100 || 0.5;
+    const offsetX = (viewportWidth - renderedWidth) * positionX;
+    const offsetY = (viewportHeight - renderedHeight) * positionY;
+
+    hotspots.forEach((hotspot) => {
+      const rawLeft = offsetX + Number(hotspot.dataset.x) * renderedWidth;
+      const rawTop = offsetY + Number(hotspot.dataset.y) * renderedHeight;
+      const edgeMargin = viewportWidth < 900 ? 24 : 0;
+      hotspot.style.left = `${clamp(rawLeft, edgeMargin, viewportWidth - edgeMargin)}px`;
+      hotspot.style.top = `${clamp(rawTop, 70, viewportHeight - 70)}px`;
+      hotspot.classList.toggle('is-edge', rawLeft < edgeMargin || rawLeft > viewportWidth - edgeMargin);
     });
-  }, { threshold: 0.15 });
+  }
 
-  document.querySelectorAll('.reveal').forEach((element) => revealObserver.observe(element));
-
-  const setMenuState = (open) => {
-    body.classList.toggle('menu-open', open);
-    menuToggle.setAttribute('aria-expanded', String(open));
-    menuToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-    mobileMenu.setAttribute('aria-hidden', String(!open));
+  const handleWheel = (event) => {
+    event.preventDefault();
+    if (transitionLocked || body.classList.contains('detail-open')) return;
+    wheelTotal += event.deltaY;
+    clearTimeout(wheelTimer);
+    wheelTimer = window.setTimeout(() => { wheelTotal = 0; }, 180);
+    if (Math.abs(wheelTotal) < 38) return;
+    const direction = wheelTotal > 0 ? 1 : -1;
+    wheelTotal = 0;
+    setStage(currentStage + direction);
   };
 
-  menuToggle.addEventListener('click', () => setMenuState(!body.classList.contains('menu-open')));
-  mobileMenu.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setMenuState(false)));
-  window.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') setMenuState(false);
-  });
+  const handleKey = (event) => {
+    if (event.key === 'Escape' && body.classList.contains('detail-open')) {
+      closeDetail();
+      return;
+    }
+    if (transitionLocked || body.classList.contains('detail-open')) return;
+    if (['ArrowDown', 'PageDown', ' '].includes(event.key)) {
+      event.preventDefault();
+      setStage(currentStage + 1);
+    }
+    if (['ArrowUp', 'PageUp'].includes(event.key)) {
+      event.preventDefault();
+      setStage(currentStage - 1);
+    }
+  };
 
-  window.addEventListener('scroll', requestTick, { passive: true });
-  window.addEventListener('resize', requestTick);
-  requestTick();
+  const boot = () => {
+    if (booted) return;
+    booted = true;
+    video.currentTime = 0;
+    playForwardTo(stageTimes[0], () => {
+      updateStageInterface(0);
+      body.classList.remove('is-loading');
+      transitionLocked = false;
+
+      const hash = location.hash.replace('#', '');
+      if (hash === 'about') setStage(1);
+      if (hash.startsWith('works')) {
+        setStage(2, {
+          onComplete: () => {
+            const category = hash.split('/')[1];
+            if (category && categories[category]) openDetail(category, true);
+          }
+        });
+      }
+    });
+  };
+
+  navLinks.forEach((link) => link.addEventListener('click', () => setStage(Number(link.dataset.stageLink))));
+  hotspots.forEach((hotspot) => hotspot.addEventListener('click', () => openDetail(hotspot.dataset.hotspot, true)));
+  document.querySelector('.works-entry').addEventListener('click', () => openDetail('scene', false));
+  document.querySelector('.detail-close').addEventListener('click', closeDetail);
+  detailTitle.addEventListener('click', () => setCategoryExpanded(detailTitle.getAttribute('aria-expanded') !== 'true'));
+  categoryButtons.forEach((button) => button.addEventListener('click', () => selectCategory(button.dataset.category)));
+  window.addEventListener('wheel', handleWheel, { passive: false });
+  window.addEventListener('keydown', handleKey);
+  window.addEventListener('resize', positionHotspots);
+  window.addEventListener('touchstart', (event) => { touchStartY = event.changedTouches[0].clientY; }, { passive: true });
+  window.addEventListener('touchend', (event) => {
+    if (transitionLocked || body.classList.contains('detail-open')) return;
+    const distance = touchStartY - event.changedTouches[0].clientY;
+    if (Math.abs(distance) > 48) setStage(currentStage + (distance > 0 ? 1 : -1));
+  }, { passive: true });
+
+  video.addEventListener('loadedmetadata', boot, { once: true });
+  video.addEventListener('loadeddata', positionHotspots);
+  video.addEventListener('error', () => {
+    body.classList.remove('is-loading');
+    transitionLocked = false;
+  }, { once: true });
+  if (video.readyState >= 1) boot();
+  window.setTimeout(() => {
+    if (!booted) boot();
+    body.classList.remove('is-loading');
+  }, 6000);
 })();

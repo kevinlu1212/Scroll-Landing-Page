@@ -1,27 +1,23 @@
-# Scroll Landing Page
+# Interactive Portfolio Gallery
 
-A cinematic, scroll-driven football landing page built as a dependency-free static website.
+A three-stage, video-driven personal portfolio experience.
 
-## Files
+## Interaction
 
-- `index.html` — semantic page structure
-- `styles.css` — responsive layout, glass effects and animations
-- `script.js` — scroll-synced video, text reveal, navigation and progress indicator
-- `Scroll Landing Page.txt` — original design brief
-- `5afb3675-7d82-4143-a71b-5455c72751a3.png` — original visual reference
+- Entry: the video plays automatically to 1 second and pauses on the Home view.
+- First wheel step: the video advances to 2 seconds and opens the About view.
+- Second wheel step: the video advances to 4 seconds and opens the Works view.
+- Painting, art toy and sculpture hotspots open a blurred Works detail layer.
+- The fixed navigation provides direct access to Home, About and Works.
+- Touch swipes and keyboard arrows mirror the wheel interaction.
 
-## Run locally
+## Project files
 
-Open `index.html` directly, or serve the folder with any static server.
-
-```bash
-npx serve .
-```
+- `index.html` — page structure and accessible controls
+- `styles.css` — gallery layout, responsive design, hotspots and detail view
+- `script.js` — video state machine, wheel navigation and category interactions
+- `交互视频.mp4` — 4.18-second interaction video
 
 ## Deployment
 
-The project is compatible with GitHub Pages and requires no build command. Publish the repository root from the `main` branch.
-
-## Media note
-
-The background video is loaded from the remote URL supplied in the original brief. An internet connection is required for the video and Google Fonts; the layout remains usable if either resource is unavailable.
+This is a static site. GitHub Pages can publish the repository root from the `main` branch without a build command.

@@ -1,98 +1,104 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="WISA — premium football development, performance facilities and matchday experiences." />
-  <meta name="theme-color" content="#050505" />
-  <title>WISA — Championing The Pitch Of Legends</title>
+  <meta name="description" content="沉浸式个人作品集，以三段视频镜头探索关于我与作品。" />
+  <meta name="theme-color" content="#080806" />
+  <title>Personal Portfolio — Interactive Gallery</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body class="is-loading">
-  <div class="loader" aria-live="polite">
-    <div class="loader-mark"><span class="loader-logo">WISA</span><span class="loader-line"></span></div>
+<body class="is-loading" data-stage="0">
+  <div class="loader" role="status" aria-live="polite">
+    <div class="loader-inner"><span class="loader-index">00</span><span class="loader-line"><i></i></span><span>ENTERING GALLERY</span></div>
   </div>
 
   <div class="video-stage" aria-hidden="true">
-    <video id="scroll-video" muted playsinline preload="auto">
-      <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260521_064421_279656fd-e76f-40a0-8fed-7456d4f7715a.mp4" type="video/mp4" />
+    <video id="gallery-video" muted playsinline preload="auto">
+      <source src="交互视频.mp4" type="video/mp4" />
     </video>
-    <div class="video-overlay"></div>
+    <div class="video-grade"></div>
+    <div class="video-noise"></div>
   </div>
-  <div class="noise" aria-hidden="true"></div>
 
   <header class="site-header">
-    <a class="logo" href="#top" aria-label="WISA home">WISA</a>
-    <nav class="desktop-nav" aria-label="Main navigation">
-      <a class="nav-link" href="#programs" data-label="LEAGUES"><span>LEAGUES</span></a>
-      <a class="nav-link" href="#programs" data-label="STADIUMS"><span>STADIUMS</span></a>
-      <a class="nav-link" href="#programs" data-label="TRAINING"><span>TRAINING</span></a>
-      <a class="nav-link" href="#programs" data-label="COMPETITIONS"><span>COMPETITIONS</span></a>
-      <a class="nav-link" href="#contact" data-label="TICKETS"><span>TICKETS</span></a>
-      <a class="nav-cta" href="#contact">BUY MATCH PASS</a>
+    <button class="brand" type="button" data-stage-link="0" aria-label="返回首页">PORTFOLIO</button>
+    <nav class="main-nav" aria-label="主要导航">
+      <button class="nav-link is-active" type="button" data-stage-link="0"><span>HOME</span><i>01</i></button>
+      <button class="nav-link" type="button" data-stage-link="1"><span>关于我</span><i>02</i></button>
+      <button class="nav-link" type="button" data-stage-link="2"><span>作品</span><i>03</i></button>
     </nav>
-    <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button>
+    <div class="header-status"><i></i><span>AVAILABLE</span></div>
   </header>
 
-  <nav class="mobile-menu" aria-label="Mobile navigation" aria-hidden="true">
-    <a href="#programs">LEAGUES</a><a href="#programs">STADIUMS</a><a href="#programs">TRAINING</a>
-    <a href="#programs">COMPETITIONS</a><a href="#contact">TICKETS</a>
-    <a class="mobile-cta" href="#contact">BUY MATCH PASS</a>
-  </nav>
-
-  <main id="top" class="content-layer">
-    <section class="hero section-shell">
-      <h1 class="hero-title reveal">Championing<span class="indent">The Pitch Of Legends</span></h1>
-      <p class="hero-copy reveal">Advanced preparation and training of world-class football teams for leagues, tournaments, and trophies. <strong>We bring the trophy closer to your cabinet.</strong></p>
-      <div class="hero-actions reveal">
-        <a class="split-button" href="#programs"><span class="button-label">EXPLORE OUR STADIUMS</span><span class="button-arrow" aria-hidden="true"><span>&nearr;</span></span></a>
+  <main class="stage-content">
+    <section class="stage-panel home-panel is-active" data-panel="0" aria-labelledby="home-title">
+      <div class="panel-index">01 / HOME</div>
+      <div class="home-heading">
+        <p>VISUAL · OBJECT · SPACE</p>
+        <h1 id="home-title">Personal<br /><span>Portfolio</span></h1>
       </div>
-      <div class="scroll-cue">SCROLL TO PLAY</div>
+      <p class="home-note">在光影、物件与空间之间，建立属于作品的叙事现场。</p>
     </section>
 
-    <div class="spacer" aria-hidden="true"></div>
-
-    <section class="programs section-shell" id="programs">
-      <div>
-        <p class="eyebrow reveal">01 / PLAYER DEVELOPMENT</p>
-        <h2 class="scroll-reveal" data-reveal-text="Complete Football Programs For Professional Player Development. We Build The Foundations For Next-Generation Strikers, Midfielders, And Star Defenders."></h2>
+    <section class="stage-panel about-panel" data-panel="1" aria-labelledby="about-title" aria-hidden="true">
+      <div class="panel-index">02 / ABOUT</div>
+      <div class="about-copy">
+        <p class="kicker">ABOUT THE CREATOR</p>
+        <h2 id="about-title">关于我</h2>
+        <p>关注视觉语言、实体物件与空间体验之间的关系。通过潮玩、文创、雕塑和场景设计，将概念转化为可以被观看、触碰与进入的作品。</p>
       </div>
+      <div class="about-meta"><span>BASED IN ASIA</span><span>OPEN FOR COLLABORATION</span></div>
     </section>
 
-    <section class="features section-shell" aria-label="WISA services">
-      <div class="feature-grid">
-        <article class="feature-card reveal">
-          <span class="feature-number">01 / WISA</span>
-          <svg class="feature-icon" viewBox="0 0 71 43" aria-hidden="true"><ellipse cx="35.5" cy="21.5" rx="34.5" ry="20.5"/><ellipse cx="35.5" cy="21.5" rx="15" ry="20.5"/><path d="M1 21.5h69M7 10.5h57M7 32.5h57M35.5 1v41"/></svg>
-          <div><h3>Winning The Future On Pitch</h3><p>A complete ecosystem for ambitious players, teams and clubs.</p></div>
-        </article>
-        <article class="feature-card reveal">
-          <span class="feature-number">02 / PERFORMANCE</span><span class="feature-icon" aria-hidden="true">+</span>
-          <div><h3>Performance Analytics / Facilities</h3><p>Purpose-built training environments, sports science and real-time intelligence for every stage of player development.</p></div>
-        </article>
-        <article class="feature-card reveal">
-          <span class="feature-number">03 / MATCHDAY</span><span class="feature-icon" aria-hidden="true">&#9675;</span>
-          <div><h3>Matchday Premium / Fan Experiences!</h3><p>World-class stadium operations and unforgettable moments designed for athletes, partners and supporters.</p></div>
-        </article>
+    <section class="stage-panel works-panel" data-panel="2" aria-labelledby="works-title" aria-hidden="true">
+      <div class="panel-index">03 / WORKS</div>
+      <div class="works-intro">
+        <p>SELECT AN OBJECT</p>
+        <button class="works-entry" type="button" data-open-detail="scene"><span id="works-title">作品</span><i>↗</i></button>
+        <small>点击空间中的热点，进入对应作品分类。</small>
+      </div>
+      <div class="hotspot-layer" aria-label="作品热点">
+        <button class="hotspot hotspot-art" type="button" data-hotspot="culture" data-x="0.635" data-y="0.35" aria-label="查看墙上绘画作品">
+          <span class="hotspot-ring"><i></i></span><span class="hotspot-label"><b>01</b>墙上绘画</span>
+        </button>
+        <button class="hotspot hotspot-toy" type="button" data-hotspot="toy" data-x="0.755" data-y="0.63" aria-label="查看潮玩作品">
+          <span class="hotspot-ring"><i></i></span><span class="hotspot-label"><b>02</b>潮玩</span>
+        </button>
+        <button class="hotspot hotspot-sculpture" type="button" data-hotspot="sculpture" data-x="0.905" data-y="0.43" aria-label="查看大理石雕塑作品">
+          <span class="hotspot-ring"><i></i></span><span class="hotspot-label"><b>03</b>大理石雕塑</span>
+        </button>
       </div>
     </section>
-
-    <footer class="site-footer" id="contact">
-      <div class="footer-main">
-        <h2>Ready To Score<span>Your Winning Season?</span></h2>
-        <p class="footer-note">BUILT FOR FOOTBALL'S NEXT GENERATION</p>
-      </div>
-      <div class="footer-side">
-        <a class="footer-cta" href="mailto:team@wisa.example"><span>START YOUR SEASON</span><span>&nearr;</span></a>
-        <div class="footer-links">
-          <a href="#programs">About</a><a href="#programs">Rosters</a><a href="#programs">Coaching</a><a href="#programs">Training Camp</a><a href="#programs">Tryout</a><a href="#contact">Contact</a>
-        </div>
-        <div class="footer-meta"><span>&copy; 2026 WISA</span><span>PRIVACY / TERMS</span></div>
-      </div>
-    </footer>
   </main>
 
-  <div class="scroll-progress" aria-hidden="true"><span></span></div>
+  <aside class="detail-view" aria-hidden="true" aria-label="作品详情">
+    <div class="detail-backdrop"></div>
+    <button class="detail-close" type="button" aria-label="关闭作品详情"><span>BACK TO GALLERY</span><i>×</i></button>
+    <div class="detail-layout">
+      <div class="detail-menu">
+        <p class="panel-index">PROJECT ARCHIVE / 2026</p>
+        <button class="detail-title" type="button" aria-expanded="false"><span>作品</span><i>+</i></button>
+        <div class="category-list" aria-hidden="true">
+          <button type="button" data-category="toy"><span>01</span><b>潮玩</b></button>
+          <button type="button" data-category="culture"><span>02</span><b>文创</b></button>
+          <button type="button" data-category="sculpture"><span>03</span><b>雕塑</b></button>
+          <button type="button" data-category="scene"><span>04</span><b>场景设计</b></button>
+        </div>
+      </div>
+      <article class="category-detail" aria-live="polite">
+        <p class="category-number">04 / SCENE DESIGN</p>
+        <h2>场景设计</h2>
+        <p class="category-description">以光线、材质和观看动线组织空间，让作品与观者之间产生连续、沉浸的叙事关系。</p>
+        <div class="category-tags"><span>ATMOSPHERE</span><span>MATERIAL</span><span>EXPERIENCE</span></div>
+      </article>
+    </div>
+  </aside>
+
+  <div class="stage-indicator" aria-hidden="true"><span class="current-stage">01</span><div><i></i></div><span>03</span></div>
+  <div class="scroll-instruction"><span>滚动切换空间</span><i>↓</i></div>
+  <div class="transition-curtain" aria-hidden="true"></div>
+
   <script src="script.js"></script>
 </body>
 </html>
