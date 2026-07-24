@@ -52,6 +52,7 @@
   let wheelTotal = 0;
   let wheelTimer = 0;
   let touchStartY = 0;
+  let lanyardPulseTimer = 0;
 
   const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
   const easeInOut = (value) => value < 0.5 ? 4 * value * value * value : 1 - Math.pow(-2 * value + 2, 3) / 2;
@@ -113,6 +114,13 @@
     else seekTo(target, callback);
   };
 
+  const triggerLanyardGravity = () => {
+    window.clearTimeout(lanyardPulseTimer);
+    window.__lanyardGravityPending = true;
+    lanyardPulseTimer = window.setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('lanyard:gravity'));
+    }, 620);
+  };
   const updateStageInterface = (index) => {
     body.dataset.stage = String(index);
     panels.forEach((panel, panelIndex) => {
@@ -126,6 +134,7 @@
     currentStageLabel.textContent = String(index + 1).padStart(2, '0');
     stageProgress.style.transform = `scaleY(${(index + 1) / stageTimes.length})`;
     positionHotspots();
+    if (index === 1) triggerLanyardGravity();
   };
 
   const setStage = (index, options = {}) => {
