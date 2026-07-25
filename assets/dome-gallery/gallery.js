@@ -50,7 +50,6 @@ class DomeGallery {
     this.resizeObserver = new ResizeObserver(() => this.layout());
     this.resizeObserver.observe(this.root);
     this.setCategory(this.root.dataset.category || 'sculpture', true);
-    this.animate();
   }
 
   bindEvents() {
