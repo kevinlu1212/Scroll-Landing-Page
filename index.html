@@ -6,7 +6,8 @@
   <meta name="description" content="沉浸式个人作品集，以三段视频镜头探索关于我与作品。" />
   <meta name="theme-color" content="#080806" />
   <title>Personal Portfolio — Interactive Gallery</title>
-  <link rel="stylesheet" href="styles.css?v=20260724-6" />
+  <link rel="stylesheet" href="styles.css?v=20260725-1" />
+  <link rel="stylesheet" href="assets/dome-gallery/gallery.css?v=20260725-1" />
 </head>
 <body class="is-loading" data-stage="0">
   <div class="loader" role="status" aria-live="polite">
@@ -59,18 +60,21 @@
       <div class="panel-index">03 / WORKS</div>
       <div class="works-intro">
         <p>SELECT AN OBJECT</p>
-        <button class="works-entry" type="button" data-open-detail="scene"><span id="works-title">作品</span><i>↗</i></button>
-        <small>点击空间中的热点，进入对应作品分类。</small>
+        <button class="works-entry" type="button" data-open-detail="sculpture"><span id="works-title">作品</span><i>↗</i></button>
+        <small>点击“作品”展开分类，或选择空间中的对应热点。</small>
       </div>
       <div class="hotspot-layer" aria-label="作品热点">
-        <button class="hotspot hotspot-art" type="button" data-hotspot="culture" data-x="0.635" data-y="0.35" aria-label="查看墙上绘画作品">
-          <span class="hotspot-ring"><i></i></span><span class="hotspot-label"><b>01</b>墙上绘画</span>
+        <button class="hotspot hotspot-art" type="button" data-hotspot="scene" data-x="0.635" data-y="0.35" aria-label="查看场景设计作品">
+          <span class="hotspot-ring"><i></i></span><span class="hotspot-label"><b>03</b>场景设计</span>
         </button>
-        <button class="hotspot hotspot-toy" type="button" data-hotspot="toy" data-x="0.755" data-y="0.63" aria-label="查看潮玩作品">
-          <span class="hotspot-ring"><i></i></span><span class="hotspot-label"><b>02</b>潮玩</span>
+        <button class="hotspot hotspot-toy" type="button" data-hotspot="toyculture" data-x="0.755" data-y="0.63" aria-label="查看潮玩文创作品">
+          <span class="hotspot-ring"><i></i></span><span class="hotspot-label"><b>02</b>潮玩文创</span>
         </button>
-        <button class="hotspot hotspot-sculpture" type="button" data-hotspot="sculpture" data-x="0.905" data-y="0.43" aria-label="查看大理石雕塑作品">
-          <span class="hotspot-ring"><i></i></span><span class="hotspot-label"><b>03</b>大理石雕塑</span>
+        <button class="hotspot hotspot-sculpture" type="button" data-hotspot="sculpture" data-x="0.905" data-y="0.43" aria-label="查看雕塑作品">
+          <span class="hotspot-ring"><i></i></span><span class="hotspot-label"><b>01</b>雕塑</span>
+        </button>
+        <button class="hotspot hotspot-project" type="button" data-hotspot="project" data-x="0.49" data-y="0.565" aria-label="查看电脑中的项目作品">
+          <span class="hotspot-ring"><i></i></span><span class="hotspot-label"><b>04</b>项目</span>
         </button>
       </div>
     </section>
@@ -84,17 +88,24 @@
         <p class="panel-index">PROJECT ARCHIVE / 2026</p>
         <button class="detail-title" type="button" aria-expanded="false"><span>作品</span><i>+</i></button>
         <div class="category-list" aria-hidden="true">
-          <button type="button" data-category="toy"><span>01</span><b>潮玩</b></button>
-          <button type="button" data-category="culture"><span>02</span><b>文创</b></button>
-          <button type="button" data-category="sculpture"><span>03</span><b>雕塑</b></button>
-          <button type="button" data-category="scene"><span>04</span><b>场景设计</b></button>
+          <button type="button" data-category="sculpture"><span>01</span><b>雕塑</b></button>
+          <button type="button" data-category="toyculture"><span>02</span><b>潮玩文创</b></button>
+          <button type="button" data-category="scene"><span>03</span><b>场景设计</b></button>
+          <button type="button" data-category="project"><span>04</span><b>项目</b></button>
         </div>
       </div>
       <article class="category-detail" aria-live="polite">
-        <p class="category-number">04 / SCENE DESIGN</p>
-        <h2>场景设计</h2>
-        <p class="category-description">以光线、材质和观看动线组织空间，让作品与观者之间产生连续、沉浸的叙事关系。</p>
-        <div class="category-tags"><span>ATMOSPHERE</span><span>MATERIAL</span><span>EXPERIENCE</span></div>
+        <div class="category-copy">
+          <p class="category-number">01 / SCULPTURE</p>
+          <h2>雕塑</h2>
+          <p class="category-description">研究形体、材料与光线的关系，让静态体量在不同观看角度中呈现持续变化的空间表情。</p>
+          <div class="category-tags"><span>FORM</span><span>STONE</span><span>LIGHT</span></div>
+        </div>
+        <section class="gallery-preview" aria-label="圆顶画廊作品预览">
+          <div class="gallery-preview-head"><span>INTERACTIVE DOME GALLERY</span><b class="gallery-count">09 WORKS</b></div>
+          <div id="dome-gallery-root" data-category="sculpture"></div>
+          <p class="gallery-preview-hint"><span>拖动旋转 · 滚轮浏览 · 点击放大</span><i></i><span>GRAYSCALE / ORBIT</span></p>
+        </section>
       </article>
     </div>
   </aside>
@@ -103,7 +114,8 @@
   <div class="scroll-instruction"><span>滚动切换空间</span><i>↓</i></div>
   <div class="transition-curtain" aria-hidden="true"></div>
 
-  <script src="script.js?v=20260724-6"></script>
+  <script src="script.js?v=20260725-1"></script>
   <script type="module" src="assets/lanyard-build/lanyard.js?v=20260724-6"></script>
+  <script type="module" src="assets/dome-gallery/gallery.js?v=20260725-1"></script>
 </body>
 </html>

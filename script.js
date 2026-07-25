@@ -14,34 +14,40 @@
   const categoryHeading = document.querySelector('.category-detail h2');
   const categoryDescription = document.querySelector('.category-description');
   const categoryTags = document.querySelector('.category-tags');
+  const galleryRoot = document.querySelector('#dome-gallery-root');
+  const galleryCount = document.querySelector('.gallery-count');
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const stageTimes = [1, 2, 4];
   const stageHashes = ['home', 'about', 'works'];
   const categories = {
-    toy: {
-      number: '01 / ART TOY',
-      title: '潮玩',
-      description: '从角色性格、轮廓比例到材质触感，构建兼具叙事性与收藏体验的立体形象。',
-      tags: ['CHARACTER', 'MATERIAL', 'COLLECTIBLE']
-    },
-    culture: {
-      number: '02 / CULTURAL CREATIVE',
-      title: '文创',
-      description: '将文化线索转化为当代视觉语言，通过图形、物件与包装形成可以被日常使用的叙事载体。',
-      tags: ['GRAPHIC', 'STORY', 'IDENTITY']
-    },
     sculpture: {
-      number: '03 / SCULPTURE',
+      number: '01 / SCULPTURE',
       title: '雕塑',
       description: '研究形体、材料与光线的关系，让静态体量在不同观看角度中呈现持续变化的空间表情。',
-      tags: ['FORM', 'STONE', 'LIGHT']
+      tags: ['FORM', 'STONE', 'LIGHT'],
+      count: 9
+    },
+    toyculture: {
+      number: '02 / ART TOY & CULTURAL CREATIVE',
+      title: '潮玩文创',
+      description: '从角色塑造、产品语言到文化叙事，将具有辨识度的形象转化为可收藏、可传播的当代物件。',
+      tags: ['CHARACTER', 'CULTURE', 'COLLECTIBLE'],
+      count: 8
     },
     scene: {
-      number: '04 / SCENE DESIGN',
+      number: '03 / SCENE DESIGN',
       title: '场景设计',
       description: '以光线、材质和观看动线组织空间，让作品与观者之间产生连续、沉浸的叙事关系。',
-      tags: ['ATMOSPHERE', 'MATERIAL', 'EXPERIENCE']
+      tags: ['ATMOSPHERE', 'MATERIAL', 'EXPERIENCE'],
+      count: 16
+    },
+    project: {
+      number: '04 / PROJECTS',
+      title: '项目',
+      description: '从概念研究到视觉系统与产品落地，以完整项目串联品牌叙事、形象设计和应用场景。',
+      tags: ['RESEARCH', 'SYSTEM', 'APPLICATION'],
+      count: 22
     }
   };
 
@@ -167,22 +173,27 @@
   };
 
   const selectCategory = (key) => {
-    const category = categories[key] || categories.scene;
-    categoryButtons.forEach((button) => button.classList.toggle('is-active', button.dataset.category === key));
+    const selectedKey = categories[key] ? key : 'sculpture';
+    const category = categories[selectedKey];
+    categoryButtons.forEach((button) => button.classList.toggle('is-active', button.dataset.category === selectedKey));
     categoryNumber.textContent = category.number;
     categoryHeading.textContent = category.title;
     categoryDescription.textContent = category.description;
     categoryTags.innerHTML = category.tags.map((tag) => `<span>${tag}</span>`).join('');
-    history.replaceState(null, '', `#works/${key}`);
+    galleryCount.textContent = `${String(category.count).padStart(2, '0')} WORKS`;
+    galleryRoot.dataset.category = selectedKey;
+    window.dispatchEvent(new CustomEvent('domegallery:category', { detail: { key: selectedKey } }));
+    history.replaceState(null, '', `#works/${selectedKey}`);
   };
 
-  const openDetail = (key = 'scene', expand = false) => {
+  const openDetail = (key = 'sculpture', expand = false) => {
     video.pause();
     video.currentTime = Math.min(4, Math.max(0, video.duration - 0.03));
     selectCategory(key);
     setCategoryExpanded(expand);
     body.classList.add('detail-open');
     detailView.setAttribute('aria-hidden', 'false');
+    window.dispatchEvent(new CustomEvent('domegallery:open'));
   };
 
   function closeDetail() {
@@ -215,8 +226,9 @@
   }
 
   const handleWheel = (event) => {
+    if (body.classList.contains('detail-open')) return;
     event.preventDefault();
-    if (transitionLocked || body.classList.contains('detail-open')) return;
+    if (transitionLocked) return;
     wheelTotal += event.deltaY;
     clearTimeout(wheelTimer);
     wheelTimer = window.setTimeout(() => { wheelTotal = 0; }, 180);
@@ -266,7 +278,7 @@
 
   navLinks.forEach((link) => link.addEventListener('click', () => setStage(Number(link.dataset.stageLink))));
   hotspots.forEach((hotspot) => hotspot.addEventListener('click', () => openDetail(hotspot.dataset.hotspot, true)));
-  document.querySelector('.works-entry').addEventListener('click', () => openDetail('scene', false));
+  document.querySelector('.works-entry').addEventListener('click', () => openDetail('sculpture', true));
   document.querySelector('.detail-close').addEventListener('click', closeDetail);
   detailTitle.addEventListener('click', () => setCategoryExpanded(detailTitle.getAttribute('aria-expanded') !== 'true'));
   categoryButtons.forEach((button) => button.addEventListener('click', () => selectCategory(button.dataset.category)));
