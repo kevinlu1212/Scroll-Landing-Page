@@ -1,17 +1,18 @@
 import { galleryCollections } from './gallery-manifest.js';
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+const normalizeAngle = (value) => ((value + 180) % 360 + 360) % 360 - 180;
 
 class DomeGallery {
   constructor(root, options = {}) {
     this.root = root;
     this.options = {
-      fit: 0.8,
-      minRadius: 600,
+      fit: 0.92,
+      minRadius: 420,
       maxVerticalRotationDeg: 0,
       segments: 34,
       dragDampening: 2,
-      grayscale: true,
+      grayscale: false,
       ...options
     };
     this.rotation = 0;
@@ -42,6 +43,7 @@ class DomeGallery {
     this.viewport = this.root.querySelector('.dome-gallery-viewport');
     this.stage = this.root.querySelector('.dome-gallery-stage');
     this.lightbox = this.root.querySelector('.dome-lightbox');
+    document.body.append(this.lightbox);
     this.lightboxImage = this.lightbox.querySelector('img');
     this.lightboxCaption = this.lightbox.querySelector('figcaption');
     this.bindEvents();
@@ -69,10 +71,11 @@ class DomeGallery {
       const deltaX = event.clientX - this.lastPointerX;
       this.lastPointerX = event.clientX;
       this.dragDistance += Math.abs(deltaX);
-      const deltaRotation = deltaX / (this.options.dragDampening * 9);
-      this.rotation += deltaRotation;
-      this.velocity = deltaRotation * 0.18;
+      const deltaRotation = deltaX / (this.options.dragDampening * 1.8);
+      this.rotation = normalizeAngle(this.rotation + deltaRotation);
+      this.velocity = 0;
       this.applyTransform();
+      event.preventDefault();
     });
 
     const releasePointer = (event) => {
@@ -88,9 +91,9 @@ class DomeGallery {
     this.viewport.addEventListener('wheel', (event) => {
       event.preventDefault();
       event.stopPropagation();
-      const delta = clamp(event.deltaY, -120, 120) * -0.035;
-      this.rotation += delta;
-      this.velocity = delta * 0.32;
+      const delta = clamp(event.deltaY, -120, 120) * -0.045;
+      this.rotation = normalizeAngle(this.rotation + delta);
+      this.velocity = 0;
       this.applyTransform();
     }, { passive: false });
 
@@ -153,6 +156,10 @@ class DomeGallery {
       picture.draggable = false;
       picture.loading = index < 8 ? 'eager' : 'lazy';
       picture.decoding = 'async';
+      picture.addEventListener('load', () => {
+        button.dataset.ratio = String(picture.naturalWidth / picture.naturalHeight || 1);
+        this.layout();
+      }, { once: true });
       button.append(picture);
       button.addEventListener('click', () => {
         if (this.dragDistance > 7) return;
@@ -168,22 +175,28 @@ class DomeGallery {
     const width = this.root.clientWidth;
     const height = this.root.clientHeight;
     if (!width || !height || !this.images.length) return;
-    const radius = Math.max(this.options.minRadius, width * 0.78);
-    const cardWidth = clamp(width * 0.245 * this.options.fit, 150, 280);
-    const cardHeight = clamp(cardWidth * 0.72, 112, 210);
-    const angleStep = 360 / this.options.segments;
-    const center = (this.images.length - 1) / 2;
+    const baseHeight = clamp(Math.min(width * 0.2, height * 0.46) * this.options.fit, 118, 230);
+    const radius = clamp(Math.max(this.options.minRadius, width * 0.53), this.options.minRadius, 720);
+    const angleStep = 360 / this.images.length;
     const rowPattern = [0, -1, 1];
     this.radius = radius;
-    this.root.style.setProperty('--dome-card-width', `${cardWidth}px`);
-    this.root.style.setProperty('--dome-card-height', `${cardHeight}px`);
     this.root.style.setProperty('--dome-radius', `${radius}px`);
     [...this.stage.children].forEach((card, index) => {
-      const angle = (index - center) * angleStep * 1.08;
+      const ratio = clamp(Number(card.dataset.ratio) || 1.34, 0.56, 2.1);
+      let cardHeight = ratio < 1 ? baseHeight * 1.08 : baseHeight;
+      let cardWidth = cardHeight * ratio;
+      const maxWidth = baseHeight * 1.72;
+      if (cardWidth > maxWidth) {
+        cardWidth = maxWidth;
+        cardHeight = cardWidth / ratio;
+      }
+      const angle = index * angleStep;
       const row = rowPattern[index % rowPattern.length];
-      const offsetY = row * cardHeight * 0.78;
-      const tilt = row * -7;
-      card.style.setProperty('--card-delay', `${Math.min(index * 18, 260)}ms`);
+      const offsetY = row * baseHeight * 0.72;
+      const tilt = row * -5;
+      card.dataset.angle = String(angle);
+      card.style.setProperty('--card-width', `${cardWidth}px`);
+      card.style.setProperty('--card-height', `${cardHeight}px`);
       card.style.transform = `rotateY(${angle}deg) translateZ(${radius}px) translateY(${offsetY}px) rotateX(${tilt}deg)`;
     });
     this.applyTransform();
@@ -192,19 +205,14 @@ class DomeGallery {
   applyTransform() {
     if (!this.radius) return;
     this.stage.style.transform = `translate3d(0, 0, ${-this.radius}px) rotateY(${this.rotation}deg)`;
-  }
-
-  animate() {
-    if (!this.dragging) {
-      this.rotation += this.velocity;
-      this.velocity *= 0.94;
-      if (Math.abs(this.velocity) < 0.015) {
-        this.velocity = 0;
-        if (!document.hidden && document.body.classList.contains('detail-open') && !this.lightbox.classList.contains('is-open')) this.rotation -= 0.012;
-      }
-      this.applyTransform();
-    }
-    this.frame = requestAnimationFrame(() => this.animate());
+    [...this.stage.children].forEach((card) => {
+      const facingAngle = Math.abs(normalizeAngle(Number(card.dataset.angle) + this.rotation));
+      const visibility = clamp(1 - Math.max(0, facingAngle - 54) / 42, 0, 1);
+      card.style.opacity = String(visibility);
+      card.style.pointerEvents = facingAngle < 72 ? 'auto' : 'none';
+      card.tabIndex = facingAngle < 72 ? 0 : -1;
+      card.style.zIndex = String(Math.round(100 - facingAngle));
+    });
   }
 
   openLightbox(index) {
@@ -239,15 +247,21 @@ class DomeGallery {
 
 const root = document.querySelector('#dome-gallery-root');
 if (root) {
+  const hashCategory = location.hash.startsWith('#works/') ? location.hash.split('/')[1] : '';
+  if (galleryCollections[hashCategory]) root.dataset.category = hashCategory;
   const gallery = new DomeGallery(root, {
-    fit: 0.8,
-    minRadius: 600,
+    fit: 0.92,
+    minRadius: 420,
     maxVerticalRotationDeg: 0,
     segments: 34,
     dragDampening: 2,
-    grayscale: true
+    grayscale: false
   });
   window.addEventListener('domegallery:category', (event) => gallery.setCategory(event.detail?.key || 'sculpture'));
-  window.addEventListener('domegallery:open', () => requestAnimationFrame(() => gallery.layout()));
+  window.addEventListener('domegallery:open', () => {
+    const activeKey = root.dataset.category || 'sculpture';
+    if (gallery.category !== activeKey) gallery.setCategory(activeKey, true);
+    requestAnimationFrame(() => gallery.layout());
+  });
   window.__domeGallery = gallery;
 }

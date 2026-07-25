@@ -455,3 +455,129 @@ body.gallery-lightbox-open .detail-close {
     opacity: 1;
   }
 }
+/* Transparent 360-degree orbit refinement */
+#dome-gallery-root {
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  isolation: auto;
+}
+
+#dome-gallery-root::before,
+.dome-gallery-vignette {
+  display: none;
+}
+
+.dome-gallery-viewport {
+  overflow: visible;
+  perspective: 1200px;
+  cursor: grab;
+  user-select: none;
+}
+
+.dome-gallery-stage {
+  transition: opacity .16s ease;
+}
+
+.dome-gallery-card {
+  left: calc(var(--card-width) * -.5);
+  top: calc(var(--card-height) * -.5);
+  width: var(--card-width);
+  height: var(--card-height);
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  opacity: 0;
+  animation: none;
+  transition: opacity .1s linear;
+  will-change: transform, opacity;
+}
+
+.dome-gallery-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: none;
+  transform: none;
+  border: 1px solid rgba(255, 255, 255, .2);
+  border-radius: 10px;
+  background: transparent;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, .34);
+  transition: transform .28s var(--ease), border-color .28s ease, box-shadow .28s ease;
+}
+
+.dome-gallery-card:hover,
+.dome-gallery-card:focus-visible {
+  border-color: transparent;
+}
+
+.dome-gallery-card:hover img,
+.dome-gallery-card:focus-visible img {
+  filter: none;
+  transform: scale(1.035);
+  border-color: rgba(216, 255, 88, .78);
+  box-shadow: 0 22px 58px rgba(0, 0, 0, .44);
+}
+
+.dome-gallery-axis {
+  bottom: 4px;
+}
+
+.detail-close {
+  z-index: 12;
+}
+
+@media (min-width: 901px) {
+  .detail-menu {
+    z-index: 7;
+  }
+
+  .category-detail {
+    position: static;
+    pointer-events: none;
+  }
+
+  .category-copy {
+    position: fixed;
+    z-index: 6;
+    top: 11vh;
+    left: clamp(400px, 32vw, 520px);
+    width: min(55vw, 720px);
+    max-width: none;
+    padding-right: 0;
+    pointer-events: auto;
+  }
+
+  .gallery-preview {
+    position: fixed;
+    z-index: 2;
+    left: 50%;
+    top: 64%;
+    width: min(74vw, 1040px);
+    height: min(58vh, 520px);
+    min-height: 0;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  #dome-gallery-root {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    pointer-events: auto;
+  }
+}
+
+@media (max-width: 900px) {
+  #dome-gallery-root {
+    overflow: hidden;
+  }
+
+  .dome-gallery-viewport {
+    overflow: hidden;
+  }
+}
