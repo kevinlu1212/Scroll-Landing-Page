@@ -20,6 +20,27 @@ IMAGE_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.webp', '.gif', '.bmp'}
 COVER_WORDS = ('cover', '\u5c01\u9762', '\u9996\u56fe', '\u4e3b\u56fe', 'hero')
 MAX_SIZE = (1920, 1920)
 
+CATEGORY_DESCRIPTIONS = {
+    'sculpture': '图集记录《{title}》从形体研究、材料塑造到最终作品呈现的过程与细节。',
+    'toyculture': '图集展示《{title}》的角色设定、造型设计、材质表现与衍生应用。',
+    'scene': '图集集中展示《{title}》的空间构思、光影氛围、材质细节与最终视觉呈现。',
+    'project': '图集汇总《{title}》的概念研究、设计过程与最终成果。',
+}
+PROJECT_DESCRIPTIONS = {
+    '项目 / pawooo帕呜 / pawooo✖mando蛋糕模型': '围绕宠物主题与甜品场景展开的联名造型设计，图集记录角色比例、材质表现与产品化呈现过程。',
+    '项目 / pawooo帕呜 / 宠物手办定制': '以真实宠物特征为基础进行手办定制，通过造型提炼、神态捕捉与材质表现保留每只宠物的独特识别度。',
+    '项目 / 泥人张 / 企业定制彩塑': '面向企业品牌需求进行传统彩塑的当代表达，将品牌符号、人物形象与手工艺语言整合为定制作品。',
+    '项目 / 泥人张 / 陶瓷文创': '以传统文化元素为基础探索陶瓷文创产品，通过器型、釉色与视觉符号建立兼具文化感与日常价值的设计。',
+    '项目 / 泥人张 / 马年限定文创作品': '围绕马年生肖主题完成限定文创系列，从角色概念、造型推演到产品展示形成完整的节日产品叙事。',
+}
+
+
+def project_description(category_key, project):
+    return PROJECT_DESCRIPTIONS.get(
+        project['pathLabel'],
+        CATEGORY_DESCRIPTIONS[category_key].format(title=project['title']),
+    )
+
 
 def natural_key(value):
     return [int(part) if part.isdigit() else part.casefold() for part in re.split(r'(\d+)', str(value))]
@@ -108,6 +129,7 @@ def main():
                 'id': project_id,
                 'title': project['title'],
                 'pathLabel': project['pathLabel'],
+                'description': project_description(category_key, project),
                 'cover': images[0],
                 'images': images,
             })

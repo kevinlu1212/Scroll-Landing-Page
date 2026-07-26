@@ -9,7 +9,7 @@
   const detailView = document.querySelector('.detail-view');
   const detailTitle = document.querySelector('.detail-title');
   const categoryList = document.querySelector('.category-list');
-  const categoryButtons = [...document.querySelectorAll('[data-category]')];
+  const categoryButtons = [...document.querySelectorAll('.category-list button[data-category]')];
   const categoryNumber = document.querySelector('.category-number');
   const categoryHeading = document.querySelector('.category-detail h2');
   const categoryDescription = document.querySelector('.category-description');
@@ -211,6 +211,7 @@
   };
 
   function closeDetail() {
+    window.dispatchEvent(new CustomEvent('domegallery:close'));
     body.classList.remove('detail-open');
     detailView.setAttribute('aria-hidden', 'true');
     history.replaceState(null, '', '#works');
