@@ -72,6 +72,7 @@ def collect_projects(category_dir, category_name):
         title = relative_parts[-1]
         projects.append({
             'title': title,
+            'group': relative_parts[0] if len(relative_parts) > 1 else '',
             'pathLabel': ' / '.join((category_name, *relative_parts)),
             'files': sorted(files, key=cover_key),
         })
@@ -80,6 +81,7 @@ def collect_projects(category_dir, category_name):
     for path in image_files(category_dir):
         projects.append({
             'title': path.stem,
+            'group': '',
             'pathLabel': category_name,
             'files': [path],
         })
@@ -128,6 +130,7 @@ def main():
             output_projects.append({
                 'id': project_id,
                 'title': project['title'],
+                'group': project['group'],
                 'pathLabel': project['pathLabel'],
                 'description': project_description(category_key, project),
                 'cover': images[0],

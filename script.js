@@ -53,7 +53,8 @@
 
   galleryRoot.addEventListener('domegallery:ready', (event) => {
     const count = Number(event.detail?.count) || 0;
-    galleryCount.textContent = String(count).padStart(2, '0') + ' PROJECTS';
+    const unit = event.detail?.unit || 'GALLERIES';
+    galleryCount.textContent = String(count).padStart(2, '0') + ' ' + unit;
   });
 
   let currentStage = 0;

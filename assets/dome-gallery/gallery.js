@@ -1,4 +1,4 @@
-import { galleryCollections } from './gallery-manifest.js?v=20260726-3';
+import { galleryCollections } from './gallery-manifest.js?v=20260726-4';
 
 const CATEGORY_DESCRIPTIONS = {
   sculpture: '图集记录作品从形体研究、材料塑造到最终呈现的过程与细节。',
@@ -12,38 +12,27 @@ class StaticProjectGallery {
     this.root = root;
     this.category = root.dataset.category || 'sculpture';
     this.projects = [];
+    this.activeFolder = null;
     this.activeProject = null;
     this.activeIndex = 0;
 
-    document.querySelectorAll('.project-gallery-view, .project-lightbox').forEach((element) => element.remove());
+    document.querySelectorAll('.project-lightbox').forEach((element) => element.remove());
     this.mount();
     this.bindEvents();
     this.setCategory(this.category);
   }
 
   mount() {
-    this.root.innerHTML = '<div class="project-index" role="list"></div>';
-    this.index = this.root.querySelector('.project-index');
-
-    this.projectView = document.createElement('section');
-    this.projectView.className = 'project-gallery-view';
-    this.projectView.setAttribute('aria-hidden', 'true');
-    this.projectView.innerHTML = [
-      '<button class="project-gallery-back" type="button"><span>←</span> BACK TO PROJECTS</button>',
-      '<header class="project-gallery-header">',
-      '<p class="project-gallery-path"></p>',
-      '<h2 class="project-gallery-title"></h2>',
-      '<p class="project-gallery-description"></p>',
-      '</header>',
-      '<div class="project-gallery-row" aria-label="项目图片列表"></div>',
-      '<p class="project-gallery-tip">横向浏览 · 点击图片查看大图</p>'
+    this.root.innerHTML = [
+      '<div class="project-index-toolbar" aria-hidden="true">',
+      '<button class="project-folder-back" type="button"><span>←</span> BACK TO FOLDERS</button>',
+      '<p><small>PROJECT FOLDER</small><strong></strong></p>',
+      '</div>',
+      '<div class="project-index" role="list"></div>'
     ].join('');
-    document.body.append(this.projectView);
-
-    this.projectTitle = this.projectView.querySelector('.project-gallery-title');
-    this.projectPath = this.projectView.querySelector('.project-gallery-path');
-    this.projectDescription = this.projectView.querySelector('.project-gallery-description');
-    this.galleryRow = this.projectView.querySelector('.project-gallery-row');
+    this.index = this.root.querySelector('.project-index');
+    this.toolbar = this.root.querySelector('.project-index-toolbar');
+    this.folderTitle = this.toolbar.querySelector('strong');
 
     this.lightbox = document.createElement('div');
     this.lightbox.className = 'project-lightbox';
@@ -52,6 +41,11 @@ class StaticProjectGallery {
     this.lightbox.setAttribute('aria-modal', 'true');
     this.lightbox.setAttribute('aria-label', '作品大图预览');
     this.lightbox.innerHTML = [
+      '<header class="project-lightbox-project">',
+      '<p class="project-lightbox-path"></p>',
+      '<h2 class="project-lightbox-title"></h2>',
+      '<p class="project-lightbox-description"></p>',
+      '</header>',
       '<button class="project-lightbox-close" type="button" aria-label="关闭大图">×</button>',
       '<button class="project-lightbox-nav project-lightbox-prev" type="button" aria-label="上一张">←</button>',
       '<figure><img alt=""><figcaption></figcaption></figure>',
@@ -60,6 +54,9 @@ class StaticProjectGallery {
     ].join('');
     document.body.append(this.lightbox);
 
+    this.lightboxPath = this.lightbox.querySelector('.project-lightbox-path');
+    this.lightboxTitle = this.lightbox.querySelector('.project-lightbox-title');
+    this.lightboxDescription = this.lightbox.querySelector('.project-lightbox-description');
     this.lightboxImage = this.lightbox.querySelector('figure img');
     this.lightboxCaption = this.lightbox.querySelector('figcaption');
     this.lightboxThumbs = this.lightbox.querySelector('.project-lightbox-thumbs');
@@ -69,83 +66,144 @@ class StaticProjectGallery {
 
   bindEvents() {
     this.index.addEventListener('click', (event) => {
-      const card = event.target.closest('[data-project-index]');
-      if (!card) return;
-      this.openProject(Number(card.dataset.projectIndex));
+      const folderCard = event.target.closest('[data-folder]');
+      if (folderCard) {
+        this.openFolder(folderCard.dataset.folder);
+        return;
+      }
+      const projectCard = event.target.closest('[data-project-id]');
+      if (projectCard) this.openProject(projectCard.dataset.projectId);
     });
 
-    this.projectView.querySelector('.project-gallery-back').addEventListener('click', () => this.closeProject());
-
-    this.galleryRow.addEventListener('click', (event) => {
-      const imageButton = event.target.closest('[data-image-index]');
-      if (!imageButton) return;
-      this.openLightbox(Number(imageButton.dataset.imageIndex));
-    });
-
+    this.toolbar.querySelector('.project-folder-back').addEventListener('click', () => this.closeFolder());
     this.lightbox.querySelector('.project-lightbox-close').addEventListener('click', () => this.closeLightbox());
     this.lightboxPrev.addEventListener('click', () => this.showPrevious());
     this.lightboxNext.addEventListener('click', () => this.showNext());
     this.lightboxThumbs.addEventListener('click', (event) => {
       const thumbnail = event.target.closest('[data-thumb-index]');
-      if (!thumbnail) return;
-      this.setLightboxImage(Number(thumbnail.dataset.thumbIndex));
+      if (thumbnail) this.setLightboxImage(Number(thumbnail.dataset.thumbIndex));
     });
     this.lightbox.addEventListener('click', (event) => {
       if (event.target === this.lightbox) this.closeLightbox();
     });
 
     window.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') {
-        if (this.lightbox.classList.contains('is-open')) this.closeLightbox();
-        else if (this.projectView.classList.contains('is-open')) this.closeProject();
+      if (this.lightbox.classList.contains('is-open')) {
+        if (event.key === 'Escape') this.closeLightbox();
+        if (event.key === 'ArrowLeft') this.showPrevious();
+        if (event.key === 'ArrowRight') this.showNext();
+        return;
       }
-      if (!this.lightbox.classList.contains('is-open')) return;
-      if (event.key === 'ArrowLeft') this.showPrevious();
-      if (event.key === 'ArrowRight') this.showNext();
+      if (event.key === 'Escape' && this.activeFolder) this.closeFolder();
     });
 
     window.addEventListener('domegallery:category', (event) => this.setCategory(event.detail && event.detail.key));
     window.addEventListener('domegallery:open', () => this.announceReady());
     window.addEventListener('domegallery:close', () => {
       this.closeLightbox();
-      this.closeProject();
+      this.activeFolder = null;
+      this.renderIndex();
     });
   }
 
   setCategory(key) {
     const selectedKey = galleryCollections[key] ? key : 'sculpture';
     this.closeLightbox();
-    this.closeProject();
     this.category = selectedKey;
     this.projects = galleryCollections[selectedKey] || [];
+    this.activeFolder = null;
     this.root.dataset.category = selectedKey;
     this.renderIndex();
     this.announceReady();
   }
 
   announceReady() {
+    const count = this.category === 'project' && !this.activeFolder ? this.getFolders().length : this.visibleProjects().length;
     this.root.dispatchEvent(new CustomEvent('domegallery:ready', {
-      detail: { category: this.category, count: this.projects.length }
+      detail: { category: this.category, count, unit: this.category === 'project' && !this.activeFolder ? 'FOLDERS' : 'GALLERIES' }
     }));
+  }
+
+  getFolders() {
+    const folders = new Map();
+    this.projects.forEach((project) => {
+      if (!project.group) return;
+      if (!folders.has(project.group)) folders.set(project.group, []);
+      folders.get(project.group).push(project);
+    });
+    return Array.from(folders, ([name, projects]) => ({ name, projects }));
+  }
+
+  visibleProjects() {
+    if (this.category !== 'project' || !this.activeFolder) return this.projects;
+    return this.projects.filter((project) => project.group === this.activeFolder);
   }
 
   renderIndex() {
     this.index.replaceChildren();
-    if (!this.projects.length) {
+    const showFolders = this.category === 'project' && !this.activeFolder;
+    this.root.classList.toggle('is-folder-index', showFolders);
+    this.root.classList.toggle('is-folder-open', Boolean(this.activeFolder));
+    this.toolbar.setAttribute('aria-hidden', String(!this.activeFolder));
+    this.folderTitle.textContent = this.activeFolder || '';
+
+    if (showFolders) this.renderFolders();
+    else this.renderProjects(this.visibleProjects());
+    this.index.scrollTop = 0;
+  }
+
+  renderFolders() {
+    const folders = this.getFolders();
+    folders.forEach((folder) => {
+      const card = document.createElement('button');
+      card.className = 'project-folder-card';
+      card.type = 'button';
+      card.dataset.folder = folder.name;
+      card.setAttribute('role', 'listitem');
+      card.setAttribute('aria-label', '打开文件夹：' + folder.name);
+
+      const frame = document.createElement('span');
+      frame.className = 'project-folder-frame';
+      const coverProjects = folder.projects.slice(0, 2);
+      coverProjects.forEach((project) => {
+        const image = document.createElement('img');
+        image.src = project.cover.src;
+        image.alt = '';
+        frame.append(image);
+      });
+      const folderMark = document.createElement('span');
+      folderMark.className = 'project-folder-mark';
+      folderMark.textContent = 'FOLDER';
+      frame.append(folderMark);
+
+      const meta = document.createElement('span');
+      meta.className = 'project-cover-meta';
+      const title = document.createElement('strong');
+      title.textContent = folder.name;
+      const count = document.createElement('small');
+      count.textContent = String(folder.projects.length).padStart(2, '0') + ' GALLERIES';
+      meta.append(title, count);
+      card.append(frame, meta);
+      this.index.append(card);
+    });
+  }
+
+  renderProjects(projects) {
+    if (!projects.length) {
       const empty = document.createElement('p');
       empty.className = 'project-index-empty';
-      empty.textContent = '该分类暂未添加项目。';
+      empty.textContent = '该分类暂未添加图集。';
       this.index.append(empty);
       return;
     }
 
-    this.projects.forEach((project, projectIndex) => {
+    projects.forEach((project, projectIndex) => {
       const card = document.createElement('button');
       card.className = 'project-cover-card';
       card.type = 'button';
-      card.dataset.projectIndex = String(projectIndex);
+      card.dataset.projectId = project.id;
       card.setAttribute('role', 'listitem');
-      card.setAttribute('aria-label', '打开项目：' + project.title);
+      card.setAttribute('aria-label', '打开图集：' + project.title);
 
       const frame = document.createElement('span');
       frame.className = 'project-cover-frame';
@@ -165,49 +223,33 @@ class StaticProjectGallery {
       card.append(frame, meta);
       this.index.append(card);
     });
-    this.index.scrollTop = 0;
   }
 
-  openProject(projectIndex) {
-    const project = this.projects[projectIndex];
+  openFolder(folderName) {
+    if (!this.getFolders().some((folder) => folder.name === folderName)) return;
+    this.activeFolder = folderName;
+    this.renderIndex();
+    this.announceReady();
+    this.toolbar.querySelector('.project-folder-back').focus({ preventScroll: true });
+  }
+
+  closeFolder() {
+    if (!this.activeFolder) return;
+    this.activeFolder = null;
+    this.renderIndex();
+    this.announceReady();
+  }
+
+  openProject(projectId) {
+    const project = this.projects.find((item) => item.id === projectId);
     if (!project) return;
     this.activeProject = project;
     this.activeIndex = 0;
-    this.projectPath.textContent = project.pathLabel;
-    this.projectTitle.textContent = project.title;
-    this.projectDescription.textContent = project.description || CATEGORY_DESCRIPTIONS[this.category];
-    this.renderProjectImages();
+    this.lightboxPath.textContent = project.pathLabel;
+    this.lightboxTitle.textContent = project.title;
+    this.lightboxDescription.textContent = project.description || CATEGORY_DESCRIPTIONS[this.category];
     this.renderThumbnails();
-    this.projectView.classList.add('is-open');
-    this.projectView.setAttribute('aria-hidden', 'false');
-    document.body.classList.add('project-gallery-open');
-    this.galleryRow.scrollLeft = 0;
-    this.projectView.querySelector('.project-gallery-back').focus({ preventScroll: true });
-  }
-
-  renderProjectImages() {
-    this.galleryRow.replaceChildren();
-    this.activeProject.images.forEach((item, imageIndex) => {
-      const button = document.createElement('button');
-      button.className = 'project-gallery-image';
-      button.type = 'button';
-      button.dataset.imageIndex = String(imageIndex);
-      button.setAttribute('aria-label', '查看大图 ' + String(imageIndex + 1));
-      const image = document.createElement('img');
-      image.src = item.src;
-      image.alt = item.alt || this.activeProject.title;
-      image.loading = imageIndex < 3 ? 'eager' : 'lazy';
-      button.append(image);
-      this.galleryRow.append(button);
-    });
-  }
-
-  closeProject() {
-    this.closeLightbox();
-    this.projectView.classList.remove('is-open');
-    this.projectView.setAttribute('aria-hidden', 'true');
-    document.body.classList.remove('project-gallery-open');
-    this.activeProject = null;
+    this.openLightbox(0);
   }
 
   openLightbox(imageIndex) {
@@ -276,7 +318,6 @@ if (root) {
   try {
     window.__domeGallery = new StaticProjectGallery(root);
   } catch (error) {
-    window.__domeGalleryError = { message: error.message, stack: error.stack };
     console.error('StaticProjectGallery failed to initialize', error);
   }
 }
