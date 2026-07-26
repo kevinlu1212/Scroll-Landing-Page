@@ -23,6 +23,8 @@ class DomeGallery {
     this.lastPointerX = 0;
     this.dragDistance = 0;
     this.pressedCard = null;
+    this.autoPausedByInteraction = false;
+    this.renderVersion = 0;
     this.images = [];
     this.activeIndex = 0;
     this.category = 'sculpture';
@@ -76,6 +78,7 @@ class DomeGallery {
       const deltaX = event.clientX - this.lastPointerX;
       this.lastPointerX = event.clientX;
       this.dragDistance += Math.abs(deltaX);
+      if (this.dragDistance > 4) this.autoPausedByInteraction = true;
       const deltaRotation = deltaX / (this.options.dragDampening * 1.8);
       this.rotation = normalizeAngle(this.rotation + deltaRotation);
       this.velocity = 0;
@@ -85,7 +88,7 @@ class DomeGallery {
 
     const releasePointer = (event) => {
       if (!this.dragging || event.pointerId !== this.pointerId) return;
-      const clickedCard = this.dragDistance <= 7 ? this.pressedCard : null;
+      const clickedCard = event.type === 'pointerup' && this.dragDistance <= 7 ? this.pressedCard : null;
       this.dragging = false;
       this.pointerId = null;
       this.pressedCard = null;
@@ -101,6 +104,7 @@ class DomeGallery {
       event.preventDefault();
       event.stopPropagation();
       const delta = clamp(event.deltaY, -120, 120) * -0.045;
+      this.autoPausedByInteraction = true;
       this.rotation = normalizeAngle(this.rotation + delta);
       this.velocity = 0;
       this.applyTransform();
@@ -109,6 +113,7 @@ class DomeGallery {
     this.viewport.addEventListener('keydown', (event) => {
       if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
       event.preventDefault();
+      this.autoPausedByInteraction = true;
       this.rotation += event.key === 'ArrowLeft' ? 12 : -12;
       this.velocity = 0;
       this.applyTransform();
@@ -140,6 +145,8 @@ class DomeGallery {
       this.images = nextImages;
       this.rotation = 0;
       this.velocity = 0;
+      this.autoPausedByInteraction = false;
+      this.lastFrameTime = performance.now();
       this.renderCards();
       this.stage.classList.remove('is-changing');
       this.root.dispatchEvent(new CustomEvent('domegallery:ready', { detail: { key: this.category, count: this.images.length } }));
@@ -153,6 +160,9 @@ class DomeGallery {
 
   renderCards() {
     const fragment = document.createDocumentFragment();
+    const renderVersion = ++this.renderVersion;
+    const readiness = [];
+    this.stage.classList.add('is-loading');
     this.images.forEach((image, index) => {
       const button = document.createElement('button');
       button.type = 'button';
@@ -163,12 +173,19 @@ class DomeGallery {
       picture.src = image.src;
       picture.alt = image.alt;
       picture.draggable = false;
-      picture.loading = index < 8 ? 'eager' : 'lazy';
+      picture.loading = 'eager';
       picture.decoding = 'async';
-      picture.addEventListener('load', () => {
-        button.dataset.ratio = String(picture.naturalWidth / picture.naturalHeight || 1);
-        this.layout();
-      }, { once: true });
+      readiness.push(new Promise((resolve) => {
+        const finalizeImage = () => {
+          button.dataset.ratio = String(picture.naturalWidth / picture.naturalHeight || 1);
+          resolve();
+        };
+        if (picture.complete) finalizeImage();
+        else {
+          picture.addEventListener('load', finalizeImage, { once: true });
+          picture.addEventListener('error', resolve, { once: true });
+        }
+      }));
       button.append(picture);
       button.addEventListener('click', (event) => {
         if (event.detail !== 0) return;
@@ -178,6 +195,11 @@ class DomeGallery {
     });
     this.stage.replaceChildren(fragment);
     this.layout();
+    Promise.all(readiness).then(() => {
+      if (renderVersion !== this.renderVersion) return;
+      this.layout();
+      requestAnimationFrame(() => this.stage.classList.remove('is-loading'));
+    });
   }
 
   layout() {
@@ -185,8 +207,14 @@ class DomeGallery {
     const height = this.root.clientHeight;
     if (!width || !height || !this.images.length) return;
     const baseHeight = clamp(Math.min(width * 0.2, height * 0.46) * this.options.fit, 118, 230);
-    const radius = clamp(Math.max(this.options.minRadius, width * 0.53), this.options.minRadius, 720);
     const angleStep = 360 / this.images.length;
+    const angleStepRadians = Math.PI * 2 / this.images.length;
+    const maximumCardWidth = baseHeight * 1.72;
+    const cardGap = clamp(baseHeight * 0.38, 42, 92);
+    const radiusForSpacing = this.images.length > 2
+      ? (maximumCardWidth + cardGap) / (2 * Math.tan(angleStepRadians / 2))
+      : this.options.minRadius;
+    const radius = Math.max(this.options.minRadius, width * 0.53, radiusForSpacing);
     const rowPattern = [0, -1, 1];
     this.radius = radius;
     this.root.style.setProperty('--dome-radius', `${radius}px`);
@@ -216,10 +244,11 @@ class DomeGallery {
     this.stage.style.transform = `translate3d(0, 0, ${-this.radius}px) rotateY(${this.rotation}deg)`;
     [...this.stage.children].forEach((card) => {
       const facingAngle = Math.abs(normalizeAngle(Number(card.dataset.angle) + this.rotation));
-      const visibility = clamp(1 - Math.max(0, facingAngle - 54) / 42, 0, 1);
+      const visibility = clamp(1 - Math.max(0, facingAngle - 44) / 18, 0, 1);
+      const isInteractive = facingAngle < 60 && visibility > 0.08;
       card.style.opacity = String(visibility);
-      card.style.pointerEvents = facingAngle < 72 ? 'auto' : 'none';
-      card.tabIndex = facingAngle < 72 ? 0 : -1;
+      card.style.pointerEvents = isInteractive ? 'auto' : 'none';
+      card.tabIndex = isInteractive ? 0 : -1;
       card.style.zIndex = String(Math.round(100 - facingAngle));
     });
   }
@@ -228,12 +257,17 @@ class DomeGallery {
     if (!this.lastFrameTime) this.lastFrameTime = now;
     const elapsed = Math.min(now - this.lastFrameTime, 40);
     this.lastFrameTime = now;
-    const canAutoRotate = !this.reduceMotion && !this.dragging && document.body.classList.contains('detail-open') && !this.lightbox.classList.contains('is-open');
+    const canAutoRotate = !this.reduceMotion && !this.dragging && !this.autoPausedByInteraction && document.body.classList.contains('detail-open') && !this.lightbox.classList.contains('is-open');
     if (canAutoRotate) {
       this.rotation = normalizeAngle(this.rotation + this.options.autoSpeed * (elapsed / 1000));
       this.applyTransform();
     }
     this.frame = requestAnimationFrame((time) => this.animate(time));
+  }
+
+  resumeAuto() {
+    this.autoPausedByInteraction = false;
+    this.lastFrameTime = performance.now();
   }
 
   openLightbox(index) {
@@ -281,6 +315,7 @@ if (root) {
   });
   window.addEventListener('domegallery:category', (event) => gallery.setCategory(event.detail?.key || 'sculpture'));
   window.addEventListener('domegallery:open', () => {
+    gallery.resumeAuto();
     const activeKey = root.dataset.category || 'sculpture';
     if (gallery.category !== activeKey) gallery.setCategory(activeKey, true);
     requestAnimationFrame(() => gallery.layout());

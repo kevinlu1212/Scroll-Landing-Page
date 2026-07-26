@@ -481,6 +481,10 @@ body.gallery-lightbox-open .detail-close {
   transition: opacity .16s ease;
 }
 
+.dome-gallery-stage.is-loading {
+  opacity: 0;
+}
+
 .dome-gallery-card {
   left: calc(var(--card-width) * -.5);
   top: calc(var(--card-height) * -.5);
