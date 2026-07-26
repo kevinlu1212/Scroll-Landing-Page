@@ -167,6 +167,11 @@
   };
 
   const setCategoryExpanded = (expanded) => {
+    if (!detailTitle) {
+      categoryList.setAttribute('aria-hidden', 'false');
+      categoryList.classList.add('is-expanded');
+      return;
+    }
     detailTitle.setAttribute('aria-expanded', String(expanded));
     categoryList.setAttribute('aria-hidden', String(!expanded));
     categoryList.classList.toggle('is-expanded', expanded);
@@ -175,7 +180,11 @@
   const selectCategory = (key) => {
     const selectedKey = categories[key] ? key : 'sculpture';
     const category = categories[selectedKey];
-    categoryButtons.forEach((button) => button.classList.toggle('is-active', button.dataset.category === selectedKey));
+    categoryButtons.forEach((button) => {
+      const active = button.dataset.category === selectedKey;
+      button.classList.toggle('is-active', active);
+      button.setAttribute('aria-current', String(active));
+    });
     categoryNumber.textContent = category.number;
     categoryHeading.textContent = category.title;
     categoryDescription.textContent = category.description;
@@ -276,11 +285,50 @@
     });
   };
 
+  const initLineSidebar = () => {
+    const sidebar = document.querySelector('[data-line-sidebar]');
+    if (!sidebar) return;
+    const items = [...sidebar.querySelectorAll('[data-category]')];
+    const proximityRadius = 100;
+    const maxShift = 30;
+    const minimumTickScale = 0.5;
+
+    const resetItems = () => {
+      items.forEach((item) => {
+        item.style.setProperty('--line-shift', '0px');
+        item.style.setProperty('--line-tick-scale', String(minimumTickScale));
+      });
+    };
+
+    const updateItems = (clientY) => {
+      items.forEach((item) => {
+        const bounds = item.getBoundingClientRect();
+        const distance = Math.abs(clientY - (bounds.top + bounds.height / 2));
+        const proximity = clamp(1 - distance / proximityRadius, 0, 1);
+        const smoothFalloff = proximity * proximity * (3 - 2 * proximity);
+        item.style.setProperty('--line-shift', `${smoothFalloff * maxShift}px`);
+        item.style.setProperty('--line-tick-scale', String(minimumTickScale + smoothFalloff * (1 - minimumTickScale)));
+      });
+    };
+
+    sidebar.addEventListener('pointermove', (event) => updateItems(event.clientY));
+    sidebar.addEventListener('pointerleave', resetItems);
+    items.forEach((item) => {
+      item.addEventListener('focus', () => {
+        const bounds = item.getBoundingClientRect();
+        updateItems(bounds.top + bounds.height / 2);
+      });
+      item.addEventListener('blur', resetItems);
+    });
+    resetItems();
+  };
+
+  initLineSidebar();
   navLinks.forEach((link) => link.addEventListener('click', () => setStage(Number(link.dataset.stageLink))));
   hotspots.forEach((hotspot) => hotspot.addEventListener('click', () => openDetail(hotspot.dataset.hotspot, true)));
   document.querySelector('.works-entry').addEventListener('click', () => openDetail('sculpture', true));
   document.querySelector('.detail-close').addEventListener('click', closeDetail);
-  detailTitle.addEventListener('click', () => setCategoryExpanded(detailTitle.getAttribute('aria-expanded') !== 'true'));
+  detailTitle?.addEventListener('click', () => setCategoryExpanded(detailTitle.getAttribute('aria-expanded') !== 'true'));
   categoryButtons.forEach((button) => button.addEventListener('click', () => selectCategory(button.dataset.category)));
   window.addEventListener('wheel', handleWheel, { passive: false });
   window.addEventListener('keydown', handleKey);

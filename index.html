@@ -6,8 +6,8 @@
   <meta name="description" content="沉浸式个人作品集，以三段视频镜头探索关于我与作品。" />
   <meta name="theme-color" content="#080806" />
   <title>Personal Portfolio — Interactive Gallery</title>
-  <link rel="stylesheet" href="styles.css?v=20260725-1" />
-  <link rel="stylesheet" href="assets/dome-gallery/gallery.css?v=20260725-3" />
+  <link rel="stylesheet" href="styles.css?v=20260726-1" />
+  <link rel="stylesheet" href="assets/dome-gallery/gallery.css?v=20260726-1" />
 </head>
 <body class="is-loading" data-stage="0">
   <div class="loader" role="status" aria-live="polite">
@@ -84,16 +84,15 @@
     <div class="detail-backdrop"></div>
     <button class="detail-close" type="button" aria-label="关闭作品详情"><span>BACK TO GALLERY</span><i>×</i></button>
     <div class="detail-layout">
-      <div class="detail-menu">
-        <p class="panel-index">PROJECT ARCHIVE / 2026</p>
-        <button class="detail-title" type="button" aria-expanded="false"><span>作品</span><i>+</i></button>
-        <div class="category-list" aria-hidden="true">
-          <button type="button" data-category="sculpture"><span>01</span><b>雕塑</b></button>
-          <button type="button" data-category="toyculture"><span>02</span><b>潮玩文创</b></button>
-          <button type="button" data-category="scene"><span>03</span><b>场景设计</b></button>
-          <button type="button" data-category="project"><span>04</span><b>项目</b></button>
+      <nav class="detail-menu line-sidebar" aria-label="作品分类导航" data-line-sidebar>
+        <p class="line-sidebar-label">PROJECT ARCHIVE / 2026</p>
+        <div class="category-list" aria-hidden="false">
+          <button type="button" data-category="sculpture" aria-current="true"><span>01</span><b>雕塑</b><i aria-hidden="true"></i></button>
+          <button type="button" data-category="toyculture"><span>02</span><b>潮玩文创</b><i aria-hidden="true"></i></button>
+          <button type="button" data-category="scene"><span>03</span><b>场景设计</b><i aria-hidden="true"></i></button>
+          <button type="button" data-category="project"><span>04</span><b>项目</b><i aria-hidden="true"></i></button>
         </div>
-      </div>
+      </nav>
       <article class="category-detail" aria-live="polite">
         <div class="category-copy">
           <p class="category-number">01 / SCULPTURE</p>
@@ -104,7 +103,7 @@
         <section class="gallery-preview" aria-label="圆顶画廊作品预览">
           <div class="gallery-preview-head"><span>INTERACTIVE DOME GALLERY</span><b class="gallery-count">09 WORKS</b></div>
           <div id="dome-gallery-root" data-category="sculpture"></div>
-          <p class="gallery-preview-hint"><span>拖动旋转 · 滚轮浏览 · 点击放大</span><i></i><span>COLOR / 360° ORBIT</span></p>
+          <p class="gallery-preview-hint"><span>按住拖动 · 自动环绕 · 点击放大</span><i></i><span>AUTO ORBIT / FULLSCREEN</span></p>
         </section>
       </article>
     </div>
@@ -114,8 +113,8 @@
   <div class="scroll-instruction"><span>滚动切换空间</span><i>↓</i></div>
   <div class="transition-curtain" aria-hidden="true"></div>
 
-  <script src="script.js?v=20260725-1"></script>
+  <script src="script.js?v=20260726-1"></script>
   <script type="module" src="assets/lanyard-build/lanyard.js?v=20260724-6"></script>
-  <script type="module" src="assets/dome-gallery/gallery.js?v=20260725-3"></script>
+  <script type="module" src="assets/dome-gallery/gallery.js?v=20260726-1"></script>
 </body>
 </html>

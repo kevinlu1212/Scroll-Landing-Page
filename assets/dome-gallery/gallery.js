@@ -1,4 +1,4 @@
-import { galleryCollections } from './gallery-manifest.js';
+﻿import { galleryCollections } from './gallery-manifest.js';
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 const normalizeAngle = (value) => ((value + 180) % 360 + 360) % 360 - 180;
@@ -13,6 +13,7 @@ class DomeGallery {
       segments: 34,
       dragDampening: 2,
       grayscale: false,
+      autoSpeed: -2.2,
       ...options
     };
     this.rotation = 0;
@@ -25,18 +26,20 @@ class DomeGallery {
     this.activeIndex = 0;
     this.category = 'sculpture';
     this.frame = 0;
+    this.lastFrameTime = 0;
+    this.reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     this.root.innerHTML = `
-      <div class="dome-gallery-viewport" tabindex="0" role="region" aria-label="可拖拽圆顶作品画廊">
+      <div class="dome-gallery-viewport" tabindex="0" role="region" aria-label="鍙嫋鎷藉渾椤朵綔鍝佺敾寤?>
         <div class="dome-gallery-stage"></div>
         <div class="dome-gallery-vignette" aria-hidden="true"></div>
         <div class="dome-gallery-axis" aria-hidden="true"><i></i><span>DRAG TO ORBIT</span><i></i></div>
       </div>
-      <div class="dome-lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-label="作品大图预览">
-        <button class="dome-lightbox-close" type="button" aria-label="关闭大图">×</button>
-        <button class="dome-lightbox-nav dome-lightbox-prev" type="button" aria-label="上一张作品">←</button>
+      <div class="dome-lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-label="浣滃搧澶у浘棰勮">
+        <button class="dome-lightbox-close" type="button" aria-label="鍏抽棴澶у浘">脳</button>
+        <button class="dome-lightbox-nav dome-lightbox-prev" type="button" aria-label="涓婁竴寮犱綔鍝?>鈫?/button>
         <figure><img alt="" /><figcaption></figcaption></figure>
-        <button class="dome-lightbox-nav dome-lightbox-next" type="button" aria-label="下一张作品">→</button>
+        <button class="dome-lightbox-nav dome-lightbox-next" type="button" aria-label="涓嬩竴寮犱綔鍝?>鈫?/button>
       </div>
     `;
 
@@ -50,6 +53,7 @@ class DomeGallery {
     this.resizeObserver = new ResizeObserver(() => this.layout());
     this.resizeObserver.observe(this.root);
     this.setCategory(this.root.dataset.category || 'sculpture', true);
+    this.animate();
   }
 
   bindEvents() {
@@ -82,6 +86,7 @@ class DomeGallery {
       this.dragging = false;
       this.pointerId = null;
       this.root.classList.remove('is-dragging');
+      this.lastFrameTime = performance.now();
       if (this.viewport.hasPointerCapture(event.pointerId)) this.viewport.releasePointerCapture(event.pointerId);
     };
 
@@ -148,7 +153,7 @@ class DomeGallery {
       button.type = 'button';
       button.className = 'dome-gallery-card';
       button.dataset.index = String(index);
-      button.setAttribute('aria-label', `查看${image.alt}`);
+      button.setAttribute('aria-label', `鏌ョ湅${image.alt}`);
       const picture = document.createElement('img');
       picture.src = image.src;
       picture.alt = image.alt;
@@ -214,6 +219,18 @@ class DomeGallery {
     });
   }
 
+  animate(now = performance.now()) {
+    if (!this.lastFrameTime) this.lastFrameTime = now;
+    const elapsed = Math.min(now - this.lastFrameTime, 40);
+    this.lastFrameTime = now;
+    const canAutoRotate = !this.reduceMotion && !this.dragging && document.body.classList.contains('detail-open') && !this.lightbox.classList.contains('is-open');
+    if (canAutoRotate) {
+      this.rotation = normalizeAngle(this.rotation + this.options.autoSpeed * (elapsed / 1000));
+      this.applyTransform();
+    }
+    this.frame = requestAnimationFrame((time) => this.animate(time));
+  }
+
   openLightbox(index) {
     this.activeIndex = index;
     this.updateLightbox();
@@ -240,7 +257,7 @@ class DomeGallery {
     if (!image) return;
     this.lightboxImage.src = image.src;
     this.lightboxImage.alt = image.alt;
-    this.lightboxCaption.textContent = `${image.alt} · ${String(this.activeIndex + 1).padStart(2, '0')} / ${String(this.images.length).padStart(2, '0')}`;
+    this.lightboxCaption.textContent = `${image.alt} 路 ${String(this.activeIndex + 1).padStart(2, '0')} / ${String(this.images.length).padStart(2, '0')}`;
   }
 }
 
@@ -254,7 +271,8 @@ if (root) {
     maxVerticalRotationDeg: 0,
     segments: 34,
     dragDampening: 2,
-    grayscale: false
+    grayscale: false,
+    autoSpeed: -2.2
   });
   window.addEventListener('domegallery:category', (event) => gallery.setCategory(event.detail?.key || 'sculpture'));
   window.addEventListener('domegallery:open', () => {
