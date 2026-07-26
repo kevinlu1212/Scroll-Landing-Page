@@ -894,3 +894,14 @@ body.gallery-lightbox-open .detail-close {
     transform: none;
   }
 }
+/* Folder-driven project gallery */
+.dome-gallery-card { color: #fff; text-align: left; }
+.dome-gallery-card::after { content: "OPEN PROJECT"; }
+.dome-project-meta { position: absolute; z-index: 3; left: 10px; right: 10px; bottom: 10px; display: grid; gap: 3px; padding: 10px 11px; border: 1px solid rgba(255,255,255,.16); border-radius: 8px; color: #fff; background: linear-gradient(135deg,rgba(6,6,5,.88),rgba(6,6,5,.48)); backdrop-filter: blur(14px); pointer-events: none; }
+.dome-project-meta small, .dome-project-meta em { overflow: hidden; color: rgba(255,255,255,.58); font-family: "JetBrains Mono", monospace; font-size: .42rem; font-style: normal; letter-spacing: .06em; text-overflow: ellipsis; text-transform: uppercase; white-space: nowrap; }
+.dome-project-meta strong { overflow: hidden; font-size: clamp(.8rem,1.2vw,1.05rem); font-weight: 500; letter-spacing: .02em; line-height: 1.2; text-overflow: ellipsis; white-space: nowrap; }
+.dome-project-meta em { justify-self: end; }
+.dome-lightbox-project { position: absolute; z-index: 2; top: 28px; left: 4vw; max-width: min(60vw,680px); display: grid; gap: 3px; }
+.dome-lightbox-project span, .dome-lightbox-project small { color: rgba(255,255,255,.46); font-family: "JetBrains Mono", monospace; font-size: .52rem; letter-spacing: .1em; text-transform: uppercase; }
+.dome-lightbox-project strong { overflow: hidden; color: #fff; font-size: clamp(1.25rem,2.3vw,2.4rem); font-weight: 500; line-height: 1.08; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width:700px) { .dome-project-meta { left: 7px; right: 7px; bottom: 7px; padding: 8px; } .dome-project-meta small { display: none; } .dome-lightbox-project { top: 22px; left: 18px; max-width: calc(100vw - 92px); } }

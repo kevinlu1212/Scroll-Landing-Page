@@ -26,30 +26,35 @@
       title: '雕塑',
       description: '研究形体、材料与光线的关系，让静态体量在不同观看角度中呈现持续变化的空间表情。',
       tags: ['FORM', 'STONE', 'LIGHT'],
-      count: 9
+      count: 7
     },
     toyculture: {
       number: '02 / ART TOY & CULTURAL CREATIVE',
       title: '潮玩文创',
       description: '从角色塑造、产品语言到文化叙事，将具有辨识度的形象转化为可收藏、可传播的当代物件。',
       tags: ['CHARACTER', 'CULTURE', 'COLLECTIBLE'],
-      count: 8
+      count: 5
     },
     scene: {
       number: '03 / SCENE DESIGN',
       title: '场景设计',
       description: '以光线、材质和观看动线组织空间，让作品与观者之间产生连续、沉浸的叙事关系。',
       tags: ['ATMOSPHERE', 'MATERIAL', 'EXPERIENCE'],
-      count: 16
+      count: 3
     },
     project: {
       number: '04 / PROJECTS',
       title: '项目',
       description: '从概念研究到视觉系统与产品落地，以完整项目串联品牌叙事、形象设计和应用场景。',
       tags: ['RESEARCH', 'SYSTEM', 'APPLICATION'],
-      count: 22
+      count: 5
     }
   };
+
+  galleryRoot.addEventListener('domegallery:ready', (event) => {
+    const count = Number(event.detail?.count) || 0;
+    galleryCount.textContent = String(count).padStart(2, '0') + ' PROJECTS';
+  });
 
   let currentStage = 0;
   let transitionLocked = true;
@@ -189,7 +194,7 @@
     categoryHeading.textContent = category.title;
     categoryDescription.textContent = category.description;
     categoryTags.innerHTML = category.tags.map((tag) => `<span>${tag}</span>`).join('');
-    galleryCount.textContent = `${String(category.count).padStart(2, '0')} WORKS`;
+    galleryCount.textContent = `${String(category.count).padStart(2, '0')} PROJECTS`;
     galleryRoot.dataset.category = selectedKey;
     window.dispatchEvent(new CustomEvent('domegallery:category', { detail: { key: selectedKey } }));
     history.replaceState(null, '', `#works/${selectedKey}`);
