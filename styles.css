@@ -597,7 +597,7 @@ body.about-experience-open .about-page-experience {
 .profile-table dt {
   color: rgba(255, 255, 255, .42);
   font-family: "JetBrains Mono", monospace;
-  font-size: .15rem;
+  font-size: .2rem;
   letter-spacing: .08em;
   text-transform: uppercase;
 }
