@@ -575,7 +575,7 @@ body.about-experience-open .about-page-experience {
 }
 
 .profile-table {
-  max-width: 540px;
+  max-width: 800px;
   margin: 22px 0 0;
   border-top: 1px solid rgba(255, 255, 255, .18);
 }
@@ -597,14 +597,14 @@ body.about-experience-open .about-page-experience {
 .profile-table dt {
   color: rgba(255, 255, 255, .42);
   font-family: "JetBrains Mono", monospace;
-  font-size: .5rem;
+  font-size: .15rem;
   letter-spacing: .08em;
   text-transform: uppercase;
 }
 
 .profile-table dd {
   color: rgba(255, 255, 255, .88);
-  font-size: clamp(.68rem, .75vw, .82rem);
+  font-size: clamp(.85rem, .75vw, .82rem);
   line-height: 1.45;
 }
 
