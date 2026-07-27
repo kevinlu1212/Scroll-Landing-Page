@@ -1,4 +1,5 @@
-﻿import json
+﻿import hashlib
+import json
 import os
 import re
 import shutil
@@ -35,10 +36,30 @@ PROJECT_DESCRIPTIONS = {
 }
 
 
+TITLE_DESCRIPTIONS = {
+    "北齐微笑": "著名佛像《北齐微笑》临摹。",
+    "漠": "作品以作者喜爱的云为意象，人物一头扎进云中，想表达在情感模式的社会现象和议题下，我们要寻找像‘云’一样的事物寻找和专注自己，完成主体性的实现。",
+    "卢沟桥群雕": "以卢沟桥事变和抗日战争为主要背景，创作的一组纪念性群雕雕塑",
+    "沧海日出": "沧海日出浮雕作品展示",
+    "觅": "雕塑作品《觅》，表达客观与主体的矛盾，如何平衡混沌与秩序，与自我的审视",
+    "IP潮玩、衍生品设计": "图集展示对潮玩的临摹模型与创作。",
+    "小青岛探路者咖啡空间": "小青岛位于青岛市南区琴屿路26号，是独立在海中的一座小岛；小青岛作为户外运动品牌探路者的品牌宣发和户外活动体验场所，作为小青岛探路者咖啡空间主要负责人，结合探路者品牌调性与青岛在地气候和风格，将一座商务会客用的空间，改造设计探路者户外品牌展示与咖啡一体的咖啡空间，创造新奇的户外生活方式体验。",
+    "次世代游戏模型": "图集集中展示次世代游戏建模的材质细节与最终视觉呈现。",
+    "电影场景气氛图": "图集为电影小镇项目中制作的以民国时代为背景的街道场景、鸟瞰场景以及室内场景的渲染气氛图",
+    "pawooo✖mando蛋糕模型": "pawooo是我个人创立负责的一个宠物定制周边品牌，图集是围绕宠物主题与甜品品牌展开的联名造型设计，为mando宠物鲜粮定制的宠物蛋糕展示模型",
+    "宠物手办定制": "pawooo帕呜是我个人创立的一个宠物定制化周边品牌，以宠物定制场景手办为主要内容，通过造型提炼、神态捕捉与材质表现保留每只宠物的独特识别度，'每一只宠物都是我们亲手选择的家人。'",
+    "企业定制彩塑": "面向企业品牌需求进行传统彩塑的当代表达，将品牌符号、手工艺语言和彩塑技艺整合为的定制彩塑作品。",
+    "马年限定文创作品": "围绕马年生肖主题和泥人张彩塑技艺和泥人张的文化特征，完成限定文创的创新系列，从0-1完成从概念、造型推演到产品展示形成完整的节日产品叙事。产品包括《马上又财》彩塑摆件和《瑞马凝香》茶香浮雕香挂",
+}
+
+
 def project_description(category_key, project):
-    return PROJECT_DESCRIPTIONS.get(
-        project['pathLabel'],
-        CATEGORY_DESCRIPTIONS[category_key].format(title=project['title']),
+    return TITLE_DESCRIPTIONS.get(
+        project['title'],
+        PROJECT_DESCRIPTIONS.get(
+            project['pathLabel'],
+            CATEGORY_DESCRIPTIONS[category_key].format(title=project['title']),
+        ),
     )
 
 
@@ -122,8 +143,9 @@ def main():
                 destination = project_output / f'image-{image_index:02d}.webp'
                 convert_image(source, destination)
                 relative = destination.relative_to(OUTPUT_ROOT.parent.parent.parent).as_posix()
+                content_hash = hashlib.sha256(destination.read_bytes()).hexdigest()[:10]
                 images.append({
-                    'src': relative,
+                    'src': f'{relative}?v={content_hash}',
                     'alt': f"{project['title']} \u00b7 \u4f5c\u54c1 {image_index:02d}",
                 })
                 total_images += 1

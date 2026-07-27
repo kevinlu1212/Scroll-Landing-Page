@@ -1,4 +1,4 @@
-import { galleryCollections } from './gallery-manifest.js?v=20260726-4';
+import { galleryCollections } from './gallery-manifest.js?v=20260727-1';
 
 const CATEGORY_DESCRIPTIONS = {
   sculpture: '图集记录作品从形体研究、材料塑造到最终呈现的过程与细节。',
