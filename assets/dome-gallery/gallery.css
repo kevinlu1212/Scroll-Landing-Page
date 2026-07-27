@@ -1262,7 +1262,7 @@ body.gallery-lightbox-open .detail-close {
 .project-lightbox figcaption {
   color: rgba(255, 255, 255, .5);
   font-family: "JetBrains Mono", monospace;
-  font-size: .80rem;
+  font-size: .100rem;
   letter-spacing: .08em;
 }
 
