@@ -597,14 +597,14 @@ body.about-experience-open .about-page-experience {
 .profile-table dt {
   color: rgba(255, 255, 255, .42);
   font-family: "JetBrains Mono", monospace;
-  font-size: .120rem;
+  font-size: .80rem;
   letter-spacing: .08em;
   text-transform: uppercase;
 }
 
 .profile-table dd {
   color: rgba(255, 255, 255, .88);
-  font-size: clamp(.120rem, .75vw, .82rem);
+  font-size: clamp(.120rem, .75vw, .120rem);
   line-height: 1.45;
 }
 
