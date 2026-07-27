@@ -16,6 +16,10 @@
   const categoryTags = document.querySelector('.category-tags');
   const galleryRoot = document.querySelector('#dome-gallery-root');
   const galleryCount = document.querySelector('.gallery-count');
+  const aboutPanel = document.querySelector('.about-panel');
+  const aboutSections = [...document.querySelectorAll('[data-about-section]')];
+  const experienceScroll = document.querySelector('.experience-scroll');
+  const scrollInstructionText = document.querySelector('.scroll-instruction span');
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const stageTimes = [1, 2, 4];
@@ -64,6 +68,9 @@
   let wheelTotal = 0;
   let wheelTimer = 0;
   let touchStartY = 0;
+  let aboutPage = 0;
+  let aboutTransitionLocked = false;
+  let aboutTransitionTimer = 0;
   let lanyardPulseTimer = 0;
 
   const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
@@ -133,6 +140,39 @@
       window.dispatchEvent(new CustomEvent('lanyard:gravity'));
     }, 620);
   };
+
+  const updateScrollInstruction = () => {
+    if (!scrollInstructionText) return;
+    if (currentStage === 1) {
+      scrollInstructionText.textContent = aboutPage === 0 ? '向下滑动查看经历' : '滚动经历内容 / 继续进入作品';
+      return;
+    }
+    scrollInstructionText.textContent = currentStage === 2 ? '滚动切换空间点击热点查看作品' : '滚动切换空间';
+  };
+
+  const setAboutPage = (page, options = {}) => {
+    const nextPage = clamp(page, 0, 1);
+    if (nextPage === aboutPage && !options.force) return;
+    aboutPage = nextPage;
+    aboutPanel.dataset.aboutPage = String(nextPage);
+    body.classList.toggle('about-experience-open', nextPage === 1);
+    aboutSections.forEach((section, index) => section.setAttribute('aria-hidden', String(index !== nextPage)));
+    if (nextPage === 0 && experienceScroll) experienceScroll.scrollTop = 0;
+    if (currentStage === 1 && options.updateHistory !== false) {
+      history.replaceState(null, '', nextPage === 1 ? '#about/experience' : '#about');
+    }
+    updateScrollInstruction();
+    window.clearTimeout(aboutTransitionTimer);
+    aboutTransitionLocked = true;
+    aboutTransitionTimer = window.setTimeout(() => { aboutTransitionLocked = false; }, reduceMotion ? 20 : 820);
+  };
+
+  const experienceAtBoundary = (direction) => {
+    if (!experienceScroll) return true;
+    if (direction > 0) return experienceScroll.scrollTop + experienceScroll.clientHeight >= experienceScroll.scrollHeight - 2;
+    return experienceScroll.scrollTop <= 2;
+  };
+
   const updateStageInterface = (index) => {
     body.dataset.stage = String(index);
     panels.forEach((panel, panelIndex) => {
@@ -146,7 +186,8 @@
     currentStageLabel.textContent = String(index + 1).padStart(2, '0');
     stageProgress.style.transform = `scaleY(${(index + 1) / stageTimes.length})`;
     positionHotspots();
-    if (index === 1) triggerLanyardGravity();
+    updateScrollInstruction();
+    if (index === 1 && aboutPage === 0) triggerLanyardGravity();
   };
 
   const setStage = (index, options = {}) => {
@@ -154,8 +195,12 @@
     if (!booted || (transitionLocked && !options.force)) return;
 
     if (body.classList.contains('detail-open')) closeDetail();
-    if (targetStage === currentStage && !options.force) return;
+    if (targetStage === currentStage && !options.force) {
+      if (targetStage === 1 && aboutPage !== 0) setAboutPage(0);
+      return;
+    }
 
+    if (targetStage !== 1 || currentStage !== 1) setAboutPage(0, { updateHistory: false, force: true });
     transitionLocked = true;
     body.classList.add('is-transitioning');
     panels.forEach((panel) => panel.classList.remove('is-active'));
@@ -243,14 +288,25 @@
 
   const handleWheel = (event) => {
     if (body.classList.contains('detail-open')) return;
+    if (currentStage === 1 && aboutPage === 1 && !experienceAtBoundary(event.deltaY > 0 ? 1 : -1)) return;
     event.preventDefault();
-    if (transitionLocked) return;
+    if (transitionLocked || aboutTransitionLocked) return;
     wheelTotal += event.deltaY;
     clearTimeout(wheelTimer);
     wheelTimer = window.setTimeout(() => { wheelTotal = 0; }, 180);
     if (Math.abs(wheelTotal) < 38) return;
     const direction = wheelTotal > 0 ? 1 : -1;
     wheelTotal = 0;
+    if (currentStage === 1) {
+      if (direction > 0 && aboutPage === 0) {
+        setAboutPage(1);
+        return;
+      }
+      if (direction < 0 && aboutPage === 1) {
+        setAboutPage(0);
+        return;
+      }
+    }
     setStage(currentStage + direction);
   };
 
@@ -259,13 +315,29 @@
       closeDetail();
       return;
     }
-    if (transitionLocked || body.classList.contains('detail-open')) return;
+    if (transitionLocked || aboutTransitionLocked || body.classList.contains('detail-open')) return;
     if (['ArrowDown', 'PageDown', ' '].includes(event.key)) {
       event.preventDefault();
+      if (currentStage === 1 && aboutPage === 0) {
+        setAboutPage(1);
+        return;
+      }
+      if (currentStage === 1 && aboutPage === 1 && experienceScroll && !experienceAtBoundary(1)) {
+        experienceScroll.scrollBy({ top: Math.max(240, experienceScroll.clientHeight * .72), behavior: 'smooth' });
+        return;
+      }
       setStage(currentStage + 1);
     }
     if (['ArrowUp', 'PageUp'].includes(event.key)) {
       event.preventDefault();
+      if (currentStage === 1 && aboutPage === 1 && experienceScroll && !experienceAtBoundary(-1)) {
+        experienceScroll.scrollBy({ top: -Math.max(240, experienceScroll.clientHeight * .72), behavior: 'smooth' });
+        return;
+      }
+      if (currentStage === 1 && aboutPage === 1) {
+        setAboutPage(0);
+        return;
+      }
       setStage(currentStage - 1);
     }
   };
@@ -280,7 +352,9 @@
       transitionLocked = false;
 
       const hash = location.hash.replace('#', '');
-      if (hash === 'about') setStage(1);
+      if (hash.startsWith('about')) {
+        setStage(1, { onComplete: () => setAboutPage(hash.includes('experience') ? 1 : 0, { force: true }) });
+      }
       if (hash.startsWith('works')) {
         setStage(2, {
           onComplete: () => {
@@ -347,7 +421,20 @@
     if (window.__lanyardDragActive || performance.now() < (window.__lanyardDragGuardUntil || 0)) return;
     if (transitionLocked || body.classList.contains('detail-open')) return;
     const distance = touchStartY - event.changedTouches[0].clientY;
-    if (Math.abs(distance) > 48) setStage(currentStage + (distance > 0 ? 1 : -1));
+    if (Math.abs(distance) <= 48) return;
+    const direction = distance > 0 ? 1 : -1;
+    if (currentStage === 1) {
+      if (aboutPage === 0 && direction > 0) {
+        setAboutPage(1);
+        return;
+      }
+      if (aboutPage === 1 && direction < 0 && experienceAtBoundary(-1)) {
+        setAboutPage(0);
+        return;
+      }
+      if (aboutPage === 1 && !experienceAtBoundary(direction)) return;
+    }
+    setStage(currentStage + direction);
   }, { passive: true });
 
   video.addEventListener('loadedmetadata', boot, { once: true });

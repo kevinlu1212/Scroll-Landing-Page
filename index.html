@@ -6,7 +6,7 @@
   <meta name="description" content="沉浸式个人作品集，以三段视频镜头探索关于我与作品。" />
   <meta name="theme-color" content="#080806" />
   <title>Personal Portfolio — Interactive Gallery</title>
-  <link rel="stylesheet" href="styles.css?v=20260726-1" />
+  <link rel="stylesheet" href="styles.css?v=20260727-2" />
   <link rel="stylesheet" href="assets/dome-gallery/gallery.css?v=20260726-9" />
 </head>
 <body class="is-loading" data-stage="0">
@@ -42,18 +42,66 @@
       <p class="home-note">在光影、物件与空间之间，建立属于作品的叙事现场。</p>
     </section>
 
-    <section class="stage-panel about-panel" data-panel="1" aria-labelledby="about-title" aria-hidden="true">
+    <section class="stage-panel about-panel" data-panel="1" data-about-page="0" aria-labelledby="about-title" aria-hidden="true">
       <div class="panel-index">02 / ABOUT</div>
-      <div class="about-copy">
-        <p class="kicker">ABOUT THE CREATOR</p>
-        <h2 id="about-title">卢博伦</h2>
-        <p>关注视觉语言、3D艺术与文化创新，在这个生产力平权的时代审美是最或缺的资源。</p>
+      <div class="about-pages">
+        <section class="about-page about-page-profile" data-about-section="profile" aria-label="个人信息">
+          <div class="about-copy">
+            <p class="kicker">ABOUT THE CREATOR</p>
+            <h2 id="about-title">卢博伦</h2>
+            <p class="about-intro">关注视觉语言、3D艺术与文化创新，在这个生产力平权的时代审美是最或缺的资源。</p>
+            <dl class="profile-table" aria-label="个人信息表">
+              <div><dt>毕业院校</dt><dd>待补充</dd></div>
+              <div><dt>专业</dt><dd>待补充</dd></div>
+              <div><dt>技能</dt><dd>雕塑 / 潮玩建模 / 文创设计 / 场景设计</dd></div>
+              <div><dt>BASE</dt><dd>ASIA</dd></div>
+              <div><dt>邮箱</dt><dd>待补充</dd></div>
+              <div><dt>微信</dt><dd>待补充</dd></div>
+            </dl>
+          </div>
+          <div class="about-lanyard" aria-label="可拖拽互动身份卡">
+            <div id="lanyard-root"></div>
+            <p class="lanyard-interaction-hint"><span>TILT / DRAG</span><i></i><span>PHYSICS CARD</span></p>
+          </div>
+          <p class="about-page-hint"><span>向下滑动查看经历</span><i>↓</i><small>WORK / PROJECT EXPERIENCE</small></p>
+        </section>
+
+        <section class="about-page about-page-experience" data-about-section="experience" aria-label="工作与项目经历" aria-hidden="true">
+          <div class="experience-scroll" tabindex="0">
+            <div class="experience-content">
+              <header class="experience-header">
+                <p class="kicker">EXPERIENCE / SELECTED PROJECTS</p>
+                <h2>工作 / 项目经历</h2>
+                <p>围绕品牌、产品、传统工艺与空间体验展开的工作与项目实践。</p>
+              </header>
+
+              <div class="experience-list">
+                <article class="experience-item experience-item-placeholder">
+                  <div class="experience-meta"><span>01</span><b>WORK EXPERIENCE</b></div>
+                  <h3>工作经历</h3>
+                  <p>待补充公司或工作室名称、岗位、任职时间与主要工作内容。</p>
+                </article>
+                <article class="experience-item">
+                  <div class="experience-meta"><span>02</span><b>BRAND / PRODUCT</b></div>
+                  <h3>pawooo 帕呜</h3>
+                  <p>个人创立并负责宠物定制化周边品牌，以宠物场景手办与联名产品为核心，完成造型设计、产品呈现与品牌内容建设。</p>
+                </article>
+                <article class="experience-item">
+                  <div class="experience-meta"><span>03</span><b>CULTURAL CREATIVE</b></div>
+                  <h3>泥人张文创项目</h3>
+                  <p>围绕传统彩塑技艺参与企业定制彩塑、陶瓷文创与生肖限定系列设计，推进概念、造型及产品化展示。</p>
+                </article>
+                <article class="experience-item">
+                  <div class="experience-meta"><span>04</span><b>SPACE / EXPERIENCE</b></div>
+                  <h3>小青岛探路者咖啡空间</h3>
+                  <p>结合探路者品牌调性与青岛在地环境，负责品牌展示、咖啡体验与户外生活方式相结合的空间改造设计。</p>
+                </article>
+              </div>
+            </div>
+          </div>
+          <p class="experience-page-hint"><span>向上返回关于我</span><i></i><span>向下进入作品</span></p>
+        </section>
       </div>
-      <div class="about-lanyard" aria-label="可拖拽互动身份卡">
-        <div id="lanyard-root"></div>
-        <p class="lanyard-interaction-hint"><span>TILT / DRAG</span><i></i><span>PHYSICS CARD</span></p>
-      </div>
-      <div class="about-meta"><span>BASED IN ASIA</span><span>OPEN FOR COLLABORATION</span></div>
     </section>
 
     <section class="stage-panel works-panel" data-panel="2" aria-labelledby="works-title" aria-hidden="true">
@@ -113,7 +161,7 @@
   <div class="scroll-instruction"><span>滚动切换空间</span><i>↓</i></div>
   <div class="transition-curtain" aria-hidden="true"></div>
 
-  <script src="script.js?v=20260726-5"></script>
+  <script src="script.js?v=20260727-2"></script>
   <script type="module" src="assets/lanyard-build/lanyard.js?v=20260726-7"></script>
   <script type="module" src="assets/dome-gallery/gallery.js?v=20260727-1"></script>
 </body>

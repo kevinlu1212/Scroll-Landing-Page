@@ -496,3 +496,407 @@ body.is-transitioning .transition-curtain { opacity: 1; }
     display: none;
   }
 }
+
+/* Two-page About profile and experience flow */
+.about-panel {
+  overflow: hidden;
+}
+
+.about-panel > .panel-index {
+  position: relative;
+  z-index: 12;
+}
+
+.about-pages,
+.about-page {
+  position: absolute;
+  inset: 0;
+}
+
+.about-pages {
+  z-index: 2;
+  overflow: hidden;
+}
+
+.about-page {
+  transition: transform .9s cubic-bezier(.16, 1, .3, 1), opacity .6s ease, visibility .6s;
+  will-change: transform, opacity;
+}
+
+.about-page-profile {
+  z-index: 2;
+  transform: translate3d(0, 0, 0);
+}
+
+.about-page-experience {
+  z-index: 8;
+  opacity: 0;
+  visibility: hidden;
+  transform: translate3d(0, 100%, 0);
+  pointer-events: none;
+}
+
+body.about-experience-open .about-page-profile {
+  opacity: 0;
+  visibility: hidden;
+  transform: translate3d(0, -100%, 0);
+  pointer-events: none;
+}
+
+body.about-experience-open .about-page-experience {
+  opacity: 1;
+  visibility: visible;
+  transform: translate3d(0, 0, 0);
+  pointer-events: auto;
+}
+
+.about-copy {
+  z-index: 7;
+  top: 15vh;
+  bottom: auto;
+  width: min(570px, 43vw);
+}
+
+.about-copy .kicker {
+  margin-bottom: 12px;
+}
+
+.about-copy h2 {
+  margin-bottom: 14px;
+  font-size: clamp(3.4rem, 5.8vw, 6.5rem);
+}
+
+.about-intro {
+  max-width: 520px;
+  margin: 0;
+  color: rgba(255, 255, 255, .72);
+  font-size: clamp(.75rem, .84vw, .92rem);
+  line-height: 1.65;
+}
+
+.profile-table {
+  max-width: 540px;
+  margin: 22px 0 0;
+  border-top: 1px solid rgba(255, 255, 255, .18);
+}
+
+.profile-table > div {
+  display: grid;
+  grid-template-columns: 108px minmax(0, 1fr);
+  align-items: start;
+  gap: 18px;
+  padding: 9px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, .13);
+}
+
+.profile-table dt,
+.profile-table dd {
+  margin: 0;
+}
+
+.profile-table dt {
+  color: rgba(255, 255, 255, .42);
+  font-family: "JetBrains Mono", monospace;
+  font-size: .5rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.profile-table dd {
+  color: rgba(255, 255, 255, .88);
+  font-size: clamp(.68rem, .75vw, .82rem);
+  line-height: 1.45;
+}
+
+.about-page-hint {
+  position: absolute;
+  z-index: 8;
+  left: 50%;
+  bottom: 3.5vh;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  color: rgba(255, 255, 255, .45);
+  font-family: "JetBrains Mono", monospace;
+  font-size: .48rem;
+  letter-spacing: .09em;
+  transform: translateX(-50%);
+  pointer-events: none;
+  transition: opacity .3s ease;
+}
+
+.about-page-hint i {
+  color: var(--lime);
+  font-size: .9rem;
+  font-style: normal;
+}
+
+.about-page-hint small {
+  color: rgba(255, 255, 255, .28);
+  font: inherit;
+}
+
+body.about-experience-open .about-page-hint {
+  opacity: 0;
+}
+
+body.about-experience-open .about-lanyard {
+  opacity: 0;
+  visibility: hidden;
+  transform: translate3d(0, -12vh, 0) scale(.96);
+  pointer-events: none;
+  transition-delay: 0s;
+}
+
+.experience-scroll {
+  position: absolute;
+  inset: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 14vh 5vw 11vh;
+  pointer-events: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(216, 255, 88, .65) rgba(255, 255, 255, .07);
+}
+
+.experience-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.experience-scroll::-webkit-scrollbar-thumb {
+  border-radius: 99px;
+  background: rgba(216, 255, 88, .65);
+}
+
+.experience-scroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, .07);
+}
+
+.experience-content {
+  width: min(1060px, 86vw);
+  margin: 0 auto;
+}
+
+.experience-header {
+  width: min(760px, 72vw);
+}
+
+.experience-header .kicker {
+  margin: 0 0 14px;
+}
+
+.experience-header h2 {
+  margin: 0;
+  font-size: clamp(3rem, 6.2vw, 7rem);
+  font-weight: 500;
+  letter-spacing: -.07em;
+  line-height: .9;
+}
+
+.experience-header > p:last-child {
+  max-width: 600px;
+  margin: 18px 0 0;
+  color: rgba(255, 255, 255, .62);
+  font-size: clamp(.76rem, .86vw, .94rem);
+  line-height: 1.7;
+}
+
+.experience-list {
+  margin-top: clamp(34px, 6vh, 68px);
+  border-top: 1px solid rgba(255, 255, 255, .18);
+}
+
+.experience-item {
+  display: grid;
+  grid-template-columns: minmax(150px, .55fr) minmax(220px, .9fr) minmax(320px, 1.55fr);
+  align-items: start;
+  gap: clamp(20px, 3vw, 48px);
+  padding: clamp(22px, 3.5vh, 38px) 0;
+  border-bottom: 1px solid rgba(255, 255, 255, .14);
+}
+
+.experience-meta {
+  display: grid;
+  gap: 7px;
+  color: rgba(255, 255, 255, .35);
+  font-family: "JetBrains Mono", monospace;
+  font-size: .48rem;
+  letter-spacing: .09em;
+}
+
+.experience-meta span {
+  color: var(--lime);
+}
+
+.experience-meta b {
+  font-weight: 400;
+}
+
+.experience-item h3 {
+  margin: 0;
+  color: rgba(255, 255, 255, .94);
+  font-size: clamp(1.1rem, 1.8vw, 1.75rem);
+  font-weight: 450;
+  line-height: 1.2;
+}
+
+.experience-item > p {
+  margin: 0;
+  color: rgba(255, 255, 255, .62);
+  font-size: clamp(.72rem, .8vw, .88rem);
+  line-height: 1.75;
+}
+
+.experience-item-placeholder {
+  opacity: .58;
+}
+
+.experience-page-hint {
+  position: fixed;
+  z-index: 10;
+  right: 5vw;
+  bottom: 3vh;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  color: rgba(255, 255, 255, .4);
+  font-family: "JetBrains Mono", monospace;
+  font-size: .47rem;
+  letter-spacing: .08em;
+  pointer-events: none;
+}
+
+.experience-page-hint i {
+  width: 28px;
+  height: 1px;
+  background: rgba(255, 255, 255, .25);
+}
+
+@media (max-width: 900px) {
+  .about-copy {
+    top: auto;
+    bottom: 5vh;
+    left: 20px;
+    width: calc(100% - 40px);
+    max-height: 67vh;
+    padding: 17px 18px 19px;
+    overflow-y: auto;
+  }
+
+  .about-copy h2 {
+    margin-bottom: 11px;
+    font-size: clamp(2.8rem, 13vw, 4.8rem);
+  }
+
+  .about-intro {
+    font-size: .72rem;
+    line-height: 1.55;
+  }
+
+  .profile-table {
+    margin-top: 15px;
+  }
+
+  .profile-table > div {
+    grid-template-columns: 82px minmax(0, 1fr);
+    gap: 10px;
+    padding: 7px 0;
+  }
+
+  .profile-table dt {
+    font-size: .43rem;
+  }
+
+  .profile-table dd {
+    font-size: .66rem;
+  }
+
+  .about-page-hint {
+    bottom: 1.5vh;
+  }
+
+  .about-page-hint small {
+    display: none;
+  }
+
+  .experience-scroll {
+    padding: 105px 20px 90px;
+  }
+
+  .experience-content,
+  .experience-header {
+    width: 100%;
+  }
+
+  .experience-header h2 {
+    font-size: clamp(2.8rem, 13vw, 5rem);
+  }
+
+  .experience-item {
+    grid-template-columns: 82px minmax(0, 1fr);
+    gap: 10px 16px;
+    padding: 22px 0;
+  }
+
+  .experience-item > p {
+    grid-column: 2;
+    font-size: .72rem;
+    line-height: 1.65;
+  }
+
+  .experience-item h3 {
+    font-size: 1rem;
+  }
+
+  .experience-page-hint {
+    right: 20px;
+    bottom: 18px;
+  }
+}
+
+@media (max-width: 520px) {
+  .about-copy {
+    max-height: 70vh;
+  }
+
+  .about-copy .kicker {
+    margin-bottom: 7px;
+  }
+
+  .experience-item {
+    grid-template-columns: 1fr;
+  }
+
+  .experience-item > p {
+    grid-column: 1;
+  }
+
+  .experience-meta {
+    grid-auto-flow: column;
+    justify-content: start;
+    gap: 10px;
+  }
+}
+
+
+@media (min-width: 901px) {
+  .about-copy {
+    top: 22vh;
+  }
+}
+
+.about-page-hint {
+  display: none;
+}
+
+
+body.about-experience-open .about-panel > .panel-index {
+  opacity: 0;
+}
+
+.experience-page-hint {
+  display: none;
+}
