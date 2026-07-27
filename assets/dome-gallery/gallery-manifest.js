@@ -5,7 +5,7 @@ export const galleryCollections = {
       "title": "北齐微笑",
       "group": "",
       "pathLabel": "雕塑 / 北齐微笑",
-      "description": "图集记录《北齐微笑》从形体研究、材料塑造到最终作品呈现的过程与细节。",
+      "description": "著名佛像《北齐微笑》临摹。",
       "cover": {
         "src": "assets/gallery/projects/sculpture/sculpture-01/image-01.webp",
         "alt": "北齐微笑 · 作品 01"
@@ -26,7 +26,7 @@ export const galleryCollections = {
       "title": "漠",
       "group": "",
       "pathLabel": "雕塑 / 漠",
-      "description": "图集记录《漠》从形体研究、材料塑造到最终作品呈现的过程与细节。",
+      "description": "作品以作者喜爱的云为意象，人物一头扎进云中，想表达在情感模式的社会现象和议题下，我们要寻找像‘云’一样的事物寻找和专注自己，完成主体性的实现。",
       "cover": {
         "src": "assets/gallery/projects/sculpture/sculpture-02/image-01.webp",
         "alt": "漠 · 作品 01"
@@ -47,7 +47,7 @@ export const galleryCollections = {
       "title": "卢沟桥群雕",
       "group": "",
       "pathLabel": "雕塑",
-      "description": "图集记录《卢沟桥群雕》从形体研究、材料塑造到最终作品呈现的过程与细节。",
+      "description": "以卢沟桥事变和抗日战争为主要背景，创作的一组纪念性群雕雕塑",
       "cover": {
         "src": "assets/gallery/projects/sculpture/sculpture-03/image-01.webp",
         "alt": "卢沟桥群雕 · 作品 01"
@@ -64,7 +64,7 @@ export const galleryCollections = {
       "title": "沧海日出",
       "group": "",
       "pathLabel": "雕塑",
-      "description": "图集记录《沧海日出》从形体研究、材料塑造到最终作品呈现的过程与细节。",
+      "description": "沧海日出浮雕作品展示",
       "cover": {
         "src": "assets/gallery/projects/sculpture/sculpture-04/image-01.webp",
         "alt": "沧海日出 · 作品 01"
@@ -95,10 +95,10 @@ export const galleryCollections = {
     },
     {
       "id": "sculpture-06",
-      "title": "雕塑_油泥特征版",
+      "title": "觅",
       "group": "",
       "pathLabel": "雕塑",
-      "description": "图集记录《雕塑_油泥特征版》从形体研究、材料塑造到最终作品呈现的过程与细节。",
+      "description": "雕塑作品《觅》，表达客观与主体的矛盾，如何平衡混沌与秩序，与自我的审视",
       "cover": {
         "src": "assets/gallery/projects/sculpture/sculpture-06/image-01.webp",
         "alt": "雕塑_油泥特征版 · 作品 01"
@@ -134,7 +134,7 @@ export const galleryCollections = {
       "title": "潮玩建模",
       "group": "",
       "pathLabel": "潮玩文创 / 潮玩建模",
-      "description": "图集展示《潮玩建模》的角色设定、造型设计、材质表现与衍生应用。",
+      "description": "图集展示对潮玩的临摹模型与创作。",
       "cover": {
         "src": "assets/gallery/projects/toyculture/toyculture-01/image-01.webp",
         "alt": "潮玩建模 · 作品 01"
@@ -180,7 +180,7 @@ export const galleryCollections = {
       "title": "lowpoly car",
       "group": "",
       "pathLabel": "潮玩文创",
-      "description": "图集展示《lowpoly car》的角色设定、造型设计、材质表现与衍生应用。",
+      "description": "图集展示lowpoly风格汽车模型展示。",
       "cover": {
         "src": "assets/gallery/projects/toyculture/toyculture-03/image-01.webp",
         "alt": "lowpoly car · 作品 01"
@@ -233,7 +233,7 @@ export const galleryCollections = {
       "title": "小青岛探路者咖啡空间",
       "group": "",
       "pathLabel": "场景 / 小青岛探路者咖啡空间",
-      "description": "图集集中展示《小青岛探路者咖啡空间》的空间构思、光影氛围、材质细节与最终视觉呈现。",
+      "description": "小青岛位于青岛市南区琴屿路26号，是独立在海中的一座小岛；小青岛作为户外运动品牌探路者的品牌宣发和户外活动体验场所，作为小青岛探路者咖啡空间主要负责人，结合探路者品牌调性与青岛在地气候和风格，将一座商务会客用的空间，改造设计探路者户外品牌展示与咖啡一体的咖啡空间，创造新奇的户外生活方式体验。",
       "cover": {
         "src": "assets/gallery/projects/scene/scene-01/image-01.webp",
         "alt": "小青岛探路者咖啡空间 · 作品 01"
@@ -262,7 +262,7 @@ export const galleryCollections = {
       "title": "次世代游戏模型",
       "group": "",
       "pathLabel": "场景 / 次世代游戏模型",
-      "description": "图集集中展示《次世代游戏模型》的空间构思、光影氛围、材质细节与最终视觉呈现。",
+      "description": "图集集中展示次世代游戏建模的材质细节与最终视觉呈现。",
       "cover": {
         "src": "assets/gallery/projects/scene/scene-02/image-01.webp",
         "alt": "次世代游戏模型 · 作品 01"
@@ -295,7 +295,7 @@ export const galleryCollections = {
       "title": "电影场景气氛图",
       "group": "",
       "pathLabel": "场景 / 电影场景气氛图",
-      "description": "图集集中展示《电影场景气氛图》的空间构思、光影氛围、材质细节与最终视觉呈现。",
+      "description": "图集为电影小镇项目中制作的以民国时代为背景的街道场景、鸟瞰场景以及室内场景的渲染气氛图",
       "cover": {
         "src": "assets/gallery/projects/scene/scene-03/image-01.webp",
         "alt": "电影场景气氛图 · 作品 01"
@@ -338,7 +338,7 @@ export const galleryCollections = {
       "title": "pawooo✖mando蛋糕模型",
       "group": "pawooo帕呜",
       "pathLabel": "项目 / pawooo帕呜 / pawooo✖mando蛋糕模型",
-      "description": "围绕宠物主题与甜品场景展开的联名造型设计，图集记录角色比例、材质表现与产品化呈现过程。",
+      "description": "pawooo是我个人创立负责的一个宠物定制周边品牌，图集是围绕宠物主题与甜品品牌展开的联名造型设计，为mando宠物鲜粮定制的宠物蛋糕展示模型",
       "cover": {
         "src": "assets/gallery/projects/project/project-01/image-01.webp",
         "alt": "pawooo✖mando蛋糕模型 · 作品 01"
@@ -371,7 +371,7 @@ export const galleryCollections = {
       "title": "宠物手办定制",
       "group": "pawooo帕呜",
       "pathLabel": "项目 / pawooo帕呜 / 宠物手办定制",
-      "description": "以真实宠物特征为基础进行手办定制，通过造型提炼、神态捕捉与材质表现保留每只宠物的独特识别度。",
+      "description": "pawooo帕呜是我个人创立的一个宠物定制化周边品牌，以宠物定制场景手办为主要内容，通过造型提炼、神态捕捉与材质表现保留每只宠物的独特识别度，'每一只宠物都是我们亲手选择的家人。'",
       "cover": {
         "src": "assets/gallery/projects/project/project-02/image-01.webp",
         "alt": "宠物手办定制 · 作品 01"
@@ -404,7 +404,7 @@ export const galleryCollections = {
       "title": "企业定制彩塑",
       "group": "泥人张",
       "pathLabel": "项目 / 泥人张 / 企业定制彩塑",
-      "description": "面向企业品牌需求进行传统彩塑的当代表达，将品牌符号、人物形象与手工艺语言整合为定制作品。",
+      "description": "面向企业品牌需求进行传统彩塑的当代表达，将品牌符号、手工艺语言和彩塑技艺整合为的定制彩塑作品。",
       "cover": {
         "src": "assets/gallery/projects/project/project-03/image-01.webp",
         "alt": "企业定制彩塑 · 作品 01"
@@ -442,7 +442,7 @@ export const galleryCollections = {
       "title": "马年限定文创作品",
       "group": "泥人张",
       "pathLabel": "项目 / 泥人张 / 马年限定文创作品",
-      "description": "围绕马年生肖主题完成限定文创系列，从角色概念、造型推演到产品展示形成完整的节日产品叙事。",
+      "description": "围绕马年生肖主题和泥人张彩塑技艺和泥人张的文化特征，完成限定文创的创新系列，从0-1完成从概念、造型推演到产品展示形成完整的节日产品叙事。产品包括《马上又财》彩塑摆件和《瑞马凝香》茶香浮雕香挂",
       "cover": {
         "src": "assets/gallery/projects/project/project-05/image-01.webp",
         "alt": "马年限定文创作品 · 作品 01"
