@@ -763,7 +763,7 @@ body.about-experience-open .about-lanyard {
 .experience-item > p {
   margin: 0;
   color: rgba(255, 255, 255, 1);
-  font-size: clamp(.72rem, .8vw, .88rem);
+  font-size: clamp(.90rem, .9vw, .95rem);
   line-height: 1.75;
 }
 
