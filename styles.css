@@ -736,7 +736,7 @@ body.about-experience-open .about-lanyard {
 .experience-meta {
   display: grid;
   gap: 7px;
-  color: rgba(255, 255, 255, .35);
+  color: rgba(255, 255, 255, .94);
   font-family: "JetBrains Mono", monospace;
   font-size: .48rem;
   letter-spacing: .09em;
