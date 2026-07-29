@@ -198,17 +198,41 @@ export const galleryCollections = {
       "pathLabel": "潮玩文创 / 众爱慈善商店ip形象—小爱",
       "description": "图集展示《众爱慈善商店ip形象—小爱》的角色设定、造型设计、材质表现与衍生应用。",
       "cover": {
-        "src": "assets/gallery/projects/toyculture/toyculture-02/image-01.webp?v=1508005e03",
+        "src": "assets/gallery/projects/toyculture/toyculture-02/image-01.webp?v=82d3330afa",
         "alt": "众爱慈善商店ip形象—小爱 · 作品 01"
       },
       "images": [
         {
-          "src": "assets/gallery/projects/toyculture/toyculture-02/image-01.webp?v=1508005e03",
+          "src": "assets/gallery/projects/toyculture/toyculture-02/image-01.webp?v=82d3330afa",
           "alt": "众爱慈善商店ip形象—小爱 · 作品 01"
         },
         {
-          "src": "assets/gallery/projects/toyculture/toyculture-02/image-02.webp?v=6f3d7e86cb",
+          "src": "assets/gallery/projects/toyculture/toyculture-02/image-02.webp?v=d68841113b",
           "alt": "众爱慈善商店ip形象—小爱 · 作品 02"
+        },
+        {
+          "src": "assets/gallery/projects/toyculture/toyculture-02/image-03.webp?v=fd13e16082",
+          "alt": "众爱慈善商店ip形象—小爱 · 作品 03"
+        },
+        {
+          "src": "assets/gallery/projects/toyculture/toyculture-02/image-04.webp?v=580318f6f4",
+          "alt": "众爱慈善商店ip形象—小爱 · 作品 04"
+        },
+        {
+          "src": "assets/gallery/projects/toyculture/toyculture-02/image-05.webp?v=087ea8798e",
+          "alt": "众爱慈善商店ip形象—小爱 · 作品 05"
+        },
+        {
+          "src": "assets/gallery/projects/toyculture/toyculture-02/image-06.webp?v=8e33965d31",
+          "alt": "众爱慈善商店ip形象—小爱 · 作品 06"
+        },
+        {
+          "src": "assets/gallery/projects/toyculture/toyculture-02/image-07.webp?v=1508005e03",
+          "alt": "众爱慈善商店ip形象—小爱 · 作品 07"
+        },
+        {
+          "src": "assets/gallery/projects/toyculture/toyculture-02/image-08.webp?v=706272cb6b",
+          "alt": "众爱慈善商店ip形象—小爱 · 作品 08"
         }
       ]
     },
@@ -391,34 +415,42 @@ export const galleryCollections = {
     },
     {
       "id": "project-02",
-      "title": "宠物手办定制",
+      "title": "宠物手办周边定制",
       "group": "pawooo帕呜",
-      "pathLabel": "项目 / pawooo帕呜 / 宠物手办定制",
+      "pathLabel": "项目 / pawooo帕呜 / 宠物手办周边定制",
       "description": "pawooo帕呜是我个人创立的一个宠物定制化周边品牌，以宠物定制场景手办为主要内容，通过造型提炼、神态捕捉与材质表现保留每只宠物的独特识别度，'每一只宠物都是我们亲手选择的家人。'",
       "cover": {
         "src": "assets/gallery/projects/project/project-02/image-01.webp?v=251e72448e",
-        "alt": "宠物手办定制 · 作品 01"
+        "alt": "宠物手办周边定制 · 作品 01"
       },
       "images": [
         {
           "src": "assets/gallery/projects/project/project-02/image-01.webp?v=251e72448e",
-          "alt": "宠物手办定制 · 作品 01"
+          "alt": "宠物手办周边定制 · 作品 01"
         },
         {
           "src": "assets/gallery/projects/project/project-02/image-02.webp?v=8229e65fa5",
-          "alt": "宠物手办定制 · 作品 02"
+          "alt": "宠物手办周边定制 · 作品 02"
         },
         {
           "src": "assets/gallery/projects/project/project-02/image-03.webp?v=928b4c1e77",
-          "alt": "宠物手办定制 · 作品 03"
+          "alt": "宠物手办周边定制 · 作品 03"
         },
         {
           "src": "assets/gallery/projects/project/project-02/image-04.webp?v=b55229124a",
-          "alt": "宠物手办定制 · 作品 04"
+          "alt": "宠物手办周边定制 · 作品 04"
         },
         {
           "src": "assets/gallery/projects/project/project-02/image-05.webp?v=6d34e723c3",
-          "alt": "宠物手办定制 · 作品 05"
+          "alt": "宠物手办周边定制 · 作品 05"
+        },
+        {
+          "src": "assets/gallery/projects/project/project-02/image-06.webp?v=8075b8e884",
+          "alt": "宠物手办周边定制 · 作品 06"
+        },
+        {
+          "src": "assets/gallery/projects/project/project-02/image-07.webp?v=df1bdff16b",
+          "alt": "宠物手办周边定制 · 作品 07"
         }
       ]
     },
@@ -429,13 +461,25 @@ export const galleryCollections = {
       "pathLabel": "项目 / 泥人张 / 企业定制彩塑",
       "description": "面向企业品牌需求进行传统彩塑的当代表达，将品牌符号、手工艺语言和彩塑技艺整合为的定制彩塑作品。",
       "cover": {
-        "src": "assets/gallery/projects/project/project-03/image-01.webp?v=a9fd91e50a",
+        "src": "assets/gallery/projects/project/project-03/image-01.webp?v=59f3e1ac46",
         "alt": "企业定制彩塑 · 作品 01"
       },
       "images": [
         {
-          "src": "assets/gallery/projects/project/project-03/image-01.webp?v=a9fd91e50a",
+          "src": "assets/gallery/projects/project/project-03/image-01.webp?v=59f3e1ac46",
           "alt": "企业定制彩塑 · 作品 01"
+        },
+        {
+          "src": "assets/gallery/projects/project/project-03/image-02.webp?v=f4b8b249b5",
+          "alt": "企业定制彩塑 · 作品 02"
+        },
+        {
+          "src": "assets/gallery/projects/project/project-03/image-03.webp?v=257afeb9bd",
+          "alt": "企业定制彩塑 · 作品 03"
+        },
+        {
+          "src": "assets/gallery/projects/project/project-03/image-04.webp?v=f10146919e",
+          "alt": "企业定制彩塑 · 作品 04"
         }
       ]
     },
